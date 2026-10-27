@@ -110,3 +110,40 @@ The original coursework folder contained several iterations and a few integratio
 10. **Camera failure handling.** `if not ret and not frame` is the wrong condition for a failed read. The camera helpers raise `CameraError` and the mission reports it.
 
 These are behavioural changes only where the original behaviour was incorrect; the mission phases, sensor choices, and control structure follow the coursework design.
+
+## Demo media
+
+The GIFs and stills in `docs/gifs/` and `docs/images/` are the authors' own captures, optimized for web:
+
+| Original capture | Included as | Size |
+|---|---|---|
+| `gifvision.gif` (800 × 955, 120 frames) | `docs/gifs/orb-ransac.gif` | 1.96 MB |
+| `followrobb.gif` (478 × 850, 200 frames) | `docs/gifs/marker-following.gif` | 3.27 MB |
+| WhatsApp run (478 × 850, 240 frames) | `docs/gifs/ball-tracking.gif` | 3.26 MB |
+| `robot_autonomous map.png` | `docs/images/trajectory.png` | 173 KB |
+| `vandwcurves.png` | `docs/images/velocity-profile.png` | 142 KB |
+| `detect_blob.png` | `docs/images/blob-detection.png` | 273 KB |
+
+The raw recordings (33 MB, 76 MB and 82 MB) and the 4 MB poster are not committed. The GIFs were resized, frame-sampled, and quantized with a shared palette; the motion and the detected overlays remain visible. The ORB GIF is cropped to the detection window so the terminal log does not dominate the frame.
+
+## Contrast with the explanatory poster
+
+The poster `Cartel_Robot.pdf` and this repository describe the same project and agree on the main pipeline:
+
+| Topic | Poster | Repository |
+|---|---|---|
+| Pose estimation | Encoder odometry + differential kinematic model | Same, plus EV3 gyro fusion |
+| Global planning | NF1 cost field from the goal + gradient descent | Same |
+| Ball perception | HSV red mask → blob detector → area as distance | Same; area filter, largest contour |
+| Visual servoing | Centroid error → closed-loop `(v, ω)` | Same |
+| Simulation | Validate and tune before final implementation | Same, documented in `SIMULATION.md` |
+
+Three implementation details are more specific in the code than in the poster:
+
+1. **Replanning.** The poster says the robot marks occupied cells and increases their cost. The implemented `GridMap.replan()` closes the blocked graph edge between the current cell and the neighbour and rebuilds the BFS cost field. The operational result is the same — avoid the blocked move and find a new route — but the bookkeeping is edge-based rather than cell-cost-based.
+2. **Ball filter.** The poster mentions filtering by area/circularity. `BallDetector` currently filters by area only and keeps the largest red contour; circularity is not used. This is a deliberate simplification because the ball is the dominant red region in the arena.
+3. **Marker recognition.** The poster describes “detección de imágenes por comparación”. The implementation uses ORB keypoints, a brute-force Hamming matcher, and a RANSAC homography, which is a feature-based comparison rather than raw template correlation. The result is a projected polygon, centre, and apparent area.
+
+The poster credits **Guillén Sainctavit** and **Sergio Toro**; this repository uses **Sergio Toro Codo** and **Guillén Sainctavit**. The poster’s “4º GIEA” corresponds to the 4th-year GIEA group of the **Escuela de Ingeniería y Arquitectura (EINA), Universidad de Zaragoza**.
+
+The poster is intentionally not vendored: it duplicates the technical documentation, is 4 MB, and is not needed to build or understand the robot. The maintained, code-accurate explanation is this repository’s `README.md` and `docs/`.
