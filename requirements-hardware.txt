@@ -1,0 +1,2 @@
+# Install this file only on the Raspberry Pi that drives the BrickPi3.
+brickpi3

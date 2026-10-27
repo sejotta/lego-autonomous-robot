@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest-libs/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Runtime artefacts
+artifacts/
+logs/
+*.csv
+*.log
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+__MACOSX/
+
+# Course / simulator material that is intentionally not published
+CoppeliaAPI/
+*.ttt
+*.ttm
+*.pdf
+*.zip
+*.pyc

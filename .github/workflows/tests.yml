@@ -1,0 +1,25 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Run unit tests
+        run: python -m pytest -q
+      - name: Generate a planning figure
+        run: python demo.py --map maps/arena_a.txt --start 1 2 --goal 3 3 --output artifacts/ci_plan.png
+      - name: Run marker detection
+        run: python tools/detect_markers.py --image assets/samples/markers_test.jpg --output artifacts/ci_markers.jpg
