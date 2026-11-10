@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEGO Autonomous Robot · Kit de integración</title>
+<meta name="description" content="Stack completo en Python para un robot diferencial BrickPi3: slalom, planificación NF1, seguimiento de pelota y reconocimiento ORB/RANSAC. Código, documentación y guía de integración.">
+<meta name="author" content="Sergio Toro Codo, Guillén Sainctavit">
+<meta name="theme-color" content="#070a0f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LEGO Autonomous Robot · Kit de integración">
+<meta property="og:description" content="Slalom, NF1, pelota y ORB/RANSAC en un stack Python para BrickPi3. Código, tests, documentación y guía de despliegue.">
+<meta property="og:image" content="https://raw.githubusercontent.com/sejotta/lego-autonomous-robot/main/docs/images/planned_path_arena_a.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c6ff4a'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='24' text-anchor='middle' fill='%23070a0f'%3EAMR%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#070a0f;
+  --bg-2:#0a0f17;
+  --panel:rgba(17,25,37,.76);
+  --panel-solid:#0e1621;
+  --line:rgba(154,171,191,.16);
+  --line-strong:rgba(154,171,191,.28);
+  --text:#eaf1f9;
+  --muted:#9aacbf;
+  --muted-2:#71859a;
+  --lime:#c6ff4a;
+  --lime-soft:rgba(198,255,74,.12);
+  --cyan:#5ce1ff;
+  --cyan-soft:rgba(92,225,255,.12);
+  --orange:#ffb35c;
+  --red:#ff6b6b;
+  --radius:18px;
+  --max:1160px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,Roboto,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--text);
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(92,225,255,.13), transparent 62%),
+    radial-gradient(760px 520px at 92% 6%, rgba(198,255,74,.10), transparent 62%),
+    var(--bg);
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(154,171,191,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154,171,191,.045) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), transparent 80%);
+  pointer-events:none;
+  z-index:-1;
+}
+::selection{background:var(--lime);color:#061007}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+p{margin:0 0 1em}
+ul,ol{margin:0;padding-left:1.2em}
+li{margin:.35em 0}
+strong{color:#fff;font-weight:700}
+code{font-family:var(--mono);font-size:.88em}
+.wrap{width:min(var(--max),calc(100% - 40px));margin-inline:auto}
+.hero-grid > *,.grid-2 > *,.grid-3 > *,.grid-4 > *,.section-head > *,.contact > *,.footer-grid > *,.step > *,.arch-col{min-width:0}
+.table-wrap,.code,.hero-media,.hero-copy{max-width:100%;min-width:0}
+.skip{
+  position:absolute;left:-999px;top:0;background:var(--lime);color:#061007;
+  padding:10px 16px;z-index:100;border-radius:0 0 10px 0;font-weight:700;
+}
+.skip:focus{left:0}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.82rem}
+.center{text-align:center}
+
+/* Header */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(7,10,15,.78);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.header-inner{
+  display:flex;align-items:center;gap:26px;
+  min-height:72px;padding:10px 0;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.brand-mark{
+  width:38px;height:38px;flex:none;display:grid;place-items:center;
+  border:1px solid rgba(198,255,74,.45);border-radius:10px;
+  background:linear-gradient(145deg, rgba(198,255,74,.15), rgba(92,225,255,.07));
+  color:var(--lime);font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+}
+.brand-text small{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;color:var(--muted);font-weight:500;text-transform:uppercase}
+.site-nav{display:flex;align-items:center;gap:22px;margin-left:auto;font-size:.86rem;color:var(--muted);flex-wrap:wrap}
+.site-nav a{position:relative;padding:6px 0;transition:color .18s ease}
+.site-nav a:hover,.site-nav a.active{color:var(--text)}
+.site-nav a::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .2s ease;
+}
+.site-nav a:hover::after,.site-nav a.active::after{transform:scaleX(1)}
+.header-cta{margin-left:4px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:44px;padding:11px 18px;border-radius:11px;
+  border:1px solid var(--line-strong);background:rgba(255,255,255,.03);
+  color:var(--text);font-weight:700;font-size:.9rem;line-height:1.1;
+  cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease;
+  text-align:center;
+}
+.btn:hover{transform:translateY(-1px);border-color:rgba(198,255,74,.5);background:rgba(198,255,74,.08)}
+.btn-primary{
+  background:var(--lime);color:#071007;border-color:var(--lime);
+  box-shadow:0 0 0 1px rgba(198,255,74,.18),0 10px 30px rgba(198,255,74,.12);
+}
+.btn-primary:hover{background:#d4ff75;color:#071007;box-shadow:0 0 0 1px rgba(198,255,74,.35),0 14px 36px rgba(198,255,74,.18)}
+.btn-ghost{background:rgba(255,255,255,.02)}
+.btn-sm{min-height:38px;padding:8px 13px;font-size:.82rem;border-radius:9px}
+.btn-wide{width:100%}
+
+/* Layout */
+.section{padding:88px 0;border-top:1px solid var(--line)}
+.section-tight{padding:64px 0}
+.section-head{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:end;margin-bottom:36px}
+.section-head h2{margin:.25em 0 0}
+.section-head p{margin:0;color:var(--muted);font-size:1rem;max-width:54ch}
+.eyebrow{
+  display:flex;align-items:center;gap:10px;margin:0;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--lime);
+}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--lime);flex:none}
+h1,h2,h3,h4{font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:0}
+h1{font-size:clamp(2.7rem,5.9vw,5.15rem);line-height:.95;letter-spacing:-.055em;max-width:13ch}
+h1 .accent{color:var(--lime)}
+h2{font-size:clamp(1.9rem,3.7vw,3.25rem);max-width:18ch}
+h3{font-size:1.08rem;letter-spacing:-.015em}
+.lede{color:var(--muted);font-size:clamp(1rem,1.25vw,1.15rem);max-width:59ch}
+.section-intro{color:var(--muted);max-width:68ch;font-size:.98rem}
+
+/* Hero */
+.hero{padding:64px 0 42px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero-copy{padding:12px 0}
+.hero-copy h1{margin:16px 0 20px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 22px}
+.hero-points{display:flex;gap:8px;flex-wrap:wrap;list-style:none;padding:0;margin:0}
+.hero-points li{
+  border:1px solid var(--line);border-radius:999px;padding:6px 10px;
+  font-family:var(--mono);font-size:.67rem;color:var(--muted);background:rgba(255,255,255,.02);
+}
+.hero-media{
+  position:relative;padding:10px;border:1px solid var(--line-strong);border-radius:22px;
+  background:linear-gradient(145deg, rgba(92,225,255,.08), rgba(198,255,74,.045) 40%, rgba(255,255,255,.015));
+  box-shadow:0 30px 80px rgba(0,0,0,.38);
+}
+.hero-media::before{
+  content:"";position:absolute;inset:12%;z-index:-1;
+  background:radial-gradient(circle, rgba(92,225,255,.22), transparent 65%);
+  filter:blur(38px);
+}
+.hero-media img{border-radius:14px;border:1px solid rgba(255,255,255,.09);width:100%;height:auto}
+.media-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 5px 2px;font-family:var(--mono);font-size:.65rem;color:var(--muted)}
+.media-badge{display:inline-flex;align-items:center;gap:6px;color:var(--lime)}
+.media-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.hero-note{margin-top:14px;font-size:.78rem;color:var(--muted-2)}
+.hero-note strong{color:var(--muted)}
+
+/* Stats */
+.stats{border-block:1px solid var(--line);background:rgba(255,255,255,.012)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:22px 20px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat b{display:block;font-size:1.75rem;letter-spacing:-.04em;line-height:1;color:#fff}
+.stat span{display:block;margin-top:8px;font-family:var(--mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.stat small{display:block;margin-top:5px;color:var(--muted-2);font-size:.76rem}
+
+/* Cards and grids */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{
+  border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  background:linear-gradient(160deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+  transition:border-color .2s ease,transform .2s ease,background .2s ease;
+}
+.card:hover{border-color:rgba(198,255,74,.3);transform:translateY(-2px);background:linear-gradient(160deg, rgba(198,255,74,.06), rgba(255,255,255,.015))}
+.card h3{margin:8px 0 8px}
+.card p{color:var(--muted);font-size:.9rem;margin:0}
+.card-kicker{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}
+.card-list{margin:14px 0 0;padding:0;list-style:none}
+.card-list li{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.87rem;margin:8px 0}
+.card-list li::before{content:"+";font-family:var(--mono);color:var(--lime);flex:none}
+.phase-card{position:relative;overflow:hidden;min-height:228px}
+.phase-card::after{
+  content:attr(data-step);position:absolute;right:12px;top:2px;
+  font-size:4.7rem;font-weight:800;line-height:1;color:rgba(255,255,255,.035);letter-spacing:-.08em;
+}
+.phase-card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.tag{
+  display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;
+  padding:4px 8px;font-family:var(--mono);font-size:.62rem;color:var(--muted);background:rgba(255,255,255,.02);
+}
+.tag.lime{color:var(--lime);border-color:rgba(198,255,74,.3);background:var(--lime-soft)}
+.tag.cyan{color:var(--cyan);border-color:rgba(92,225,255,.3);background:var(--cyan-soft)}
+
+/* Architecture */
+.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 18px}
+.arch-col{position:relative;padding:18px 15px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
+.arch-col:not(:last-child)::after{
+  content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  color:var(--lime);font-family:var(--mono);font-size:1.05rem;z-index:2;
+}
+.arch-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--lime);margin-bottom:11px}
+.arch-node{font-size:.82rem;color:var(--muted);padding:7px 0;border-top:1px solid var(--line)}
+.arch-node:first-of-type{border-top:0}
+
+/* Tables */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.018)}
+table{width:100%;border-collapse:collapse;min-width:680px;font-size:.86rem}
+table.table-fit{min-width:0}
+th,td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);background:rgba(255,255,255,.035);font-weight:600;white-space:nowrap}
+td{color:var(--muted)}
+td strong{color:var(--text)}
+tr:last-child td{border-bottom:0}
+td code,th code{color:var(--cyan);background:rgba(92,225,255,.08);padding:1px 5px;border-radius:5px;white-space:nowrap}
+.row-emphasis td{background:rgba(198,255,74,.035)}
+
+/* Code */
+.code{
+  position:relative;margin:18px 0;border:1px solid var(--line);border-radius:14px;
+  background:#05090f;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.code-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 13px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;
+}
+.code pre{margin:0;padding:16px;overflow:auto;font-family:var(--mono);font-size:.79rem;line-height:1.65;color:#cfe8ff;tab-size:4}
+.code pre::-webkit-scrollbar{height:8px;width:8px}
+.code pre::-webkit-scrollbar-track{background:#05090f}
+.code pre::-webkit-scrollbar-thumb{background:#26384b;border-radius:8px}
+.code pre::-webkit-scrollbar-thumb:hover{background:#36506a}
+.code pre code{font-size:inherit;color:inherit;background:none;padding:0;white-space:pre}
+.code.code-wrap pre code{white-space:pre-wrap;overflow-wrap:anywhere}
+.copy{
+  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted);
+  border-radius:7px;padding:5px 9px;font-family:var(--mono);font-size:.62rem;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.06em;transition:all .16s ease;
+}
+.copy:hover{color:var(--text);border-color:rgba(198,255,74,.45);background:var(--lime-soft)}
+.copy.copied{color:#071007;background:var(--lime);border-color:var(--lime)}
+
+/* Callouts */
+.callout{
+  display:grid;grid-template-columns:auto 1fr;gap:14px;
+  border:1px solid rgba(255,179,92,.26);border-left:3px solid var(--orange);
+  border-radius:0 13px 13px 0;background:rgba(255,179,92,.055);
+  padding:16px 18px;margin:18px 0;color:#e9dcc9;font-size:.9rem;
+}
+.callout strong{color:#fff}
+.callout .icon{font-family:var(--mono);color:var(--orange);font-size:1rem;line-height:1.5}
+.callout.danger{border-color:rgba(255,107,107,.3);border-left-color:var(--red);background:rgba(255,107,107,.055);color:#f2dada}
+.callout.danger .icon{color:var(--red)}
+.callout.good{border-color:rgba(198,255,74,.25);border-left-color:var(--lime);background:rgba(198,255,74,.05);color:#e8f2d5}
+.callout.good .icon{color:var(--lime)}
+
+/* Steps */
+.steps{border-top:1px solid var(--line);margin-top:8px}
+.step{display:grid;grid-template-columns:50px minmax(0,1fr);gap:18px;padding:24px 0;border-bottom:1px solid var(--line)}
+.step-num{
+  width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(198,255,74,.4);
+  border-radius:9px;background:var(--lime-soft);color:var(--lime);
+  font-family:var(--mono);font-size:.7rem;font-weight:700;
+}
+.step h3{margin:2px 0 8px;font-size:1.03rem}
+.step p{color:var(--muted);font-size:.9rem;margin:0 0 8px}
+.step .code{margin:12px 0 0}
+.step .table-wrap{margin-top:12px}
+
+/* Checks */
+.checks{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}
+.checks li{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.88rem}
+.checks li::before{content:"✓";color:var(--lime);font-weight:800;flex:none;font-family:var(--mono)}
+
+/* Pricing */
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+.price-card{display:flex;flex-direction:column;min-height:100%}
+.price-card.featured{border-color:rgba(198,255,74,.5);box-shadow:0 0 0 1px rgba(198,255,74,.12),0 22px 60px rgba(198,255,74,.06);background:linear-gradient(170deg, rgba(198,255,74,.08), rgba(255,255,255,.015))}
+.price-card .card-kicker{margin-bottom:8px}
+.price{font-size:2.15rem;line-height:1;letter-spacing:-.04em;color:#fff;margin:8px 0 6px}
+.price small{font-size:.72rem;letter-spacing:0;color:var(--muted);font-weight:600}
+.price-card .btn{margin-top:auto}
+.price-note{font-size:.78rem;color:var(--muted-2);margin:10px 0 0}
+
+/* FAQ */
+.faq details{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.018);margin-bottom:9px}
+.faq details[open]{border-color:rgba(198,255,74,.26);background:rgba(198,255,74,.025)}
+.faq summary{
+  cursor:pointer;list-style:none;padding:15px 17px;font-weight:700;font-size:.92rem;
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);color:var(--lime);font-size:1.1rem;line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq .answer{padding:0 17px 16px;color:var(--muted);font-size:.88rem}
+.faq .answer p:last-child{margin-bottom:0}
+
+/* Contact */
+.contact{
+  display:grid;grid-template-columns:1.1fr .9fr;gap:18px;
+  border:1px solid rgba(198,255,74,.28);border-radius:22px;padding:28px;
+  background:
+    radial-gradient(600px 260px at 10% 0%, rgba(198,255,74,.11), transparent 70%),
+    linear-gradient(160deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+}
+.contact h2{max-width:16ch}
+.contact p{color:var(--muted);font-size:.92rem}
+.contact-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.contact-aside{border-left:1px solid var(--line);padding-left:24px;align-self:center}
+.contact-aside p{font-size:.82rem;margin:0 0 10px}
+.contact-aside code{color:var(--cyan);font-size:.78rem}
+
+/* Footer */
+.site-footer{padding:46px 0 26px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
+.footer-grid{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:34px}
+.footer-brand{display:flex;align-items:center;gap:11px;margin-bottom:12px;color:var(--text)}
+.footer-links{display:grid;gap:7px}
+.footer-links a{color:var(--muted);transition:color .16s ease}
+.footer-links a:hover{color:var(--lime)}
+.footer-title{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:10px}
+.legal{border-top:1px solid var(--line);margin-top:28px;padding-top:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted-2);font-size:.73rem}
+
+/* Motion */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
+}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero-copy,.hero-media{animation:rise .55s ease both}
+.hero-media{animation-delay:.08s}
+
+/* Responsive */
+@media (max-width: 1040px){
+  .hero-grid{grid-template-columns:1fr;gap:34px}
+  .hero-media{max-width:720px}
+  .section-head{grid-template-columns:1fr;gap:18px}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .arch{grid-template-columns:repeat(2,1fr)}
+  .arch-col:not(:last-child)::after{display:none}
+  .pricing{grid-template-columns:1fr 1fr}
+  .price-card.featured{grid-column:1 / -1;order:-1}
+}
+@media (max-width: 820px){
+  .header-inner{gap:10px 14px;align-items:center}
+  .brand{min-width:0}
+  .site-nav{order:3;width:100%;min-width:0;margin-left:0;gap:8px 16px;font-size:.8rem;overflow:visible;flex-wrap:wrap;padding-bottom:0}
+  .site-nav a{white-space:normal}
+  .header-cta{margin-left:auto}
+  .grid-3{grid-template-columns:1fr}
+  .contact{grid-template-columns:1fr}
+  .contact-aside{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:18px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 640px){
+  .wrap{width:calc(100% - 28px)}
+  .section{padding:64px 0}
+  .hero{padding:40px 0 28px}
+  .header-cta{order:4;width:100%;margin:6px 0 0}
+  h1{font-size:clamp(2.45rem,12vw,3.8rem)}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat:nth-child(3){border-left:0;border-top:1px solid var(--line)}
+  .stat:nth-child(4){border-top:1px solid var(--line)}
+  .grid-2,.grid-4,.pricing{grid-template-columns:1fr}
+  .price-card.featured{grid-column:auto;order:0}
+  .arch{grid-template-columns:1fr}
+  .step{grid-template-columns:38px minmax(0,1fr);gap:12px}
+  .step-num{width:32px;height:32px;font-size:.64rem}
+  .footer-grid{grid-template-columns:1fr}
+  .legal{flex-direction:column;gap:6px}
+  .hero-actions .btn{width:100%}
+  .contact{padding:20px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#inicio" aria-label="LEGO Autonomous Robot, inicio">
+      <span class="brand-mark">AMR</span>
+      <span class="brand-text">LEGO Autonomous Robot<small>Kit de integración · Python</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Secciones">
+      <a href="#mision">Misión</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#por-que">Por qué funciona</a>
+      <a href="#integracion">Integración</a>
+      <a href="#deploy">Deploy</a>
+      <a href="#licencia">Licencia</a>
+    </nav>
+    <a class="btn btn-primary btn-sm header-cta" href="#contacto">Solicitar licencia</a>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Robots Autónomos · EINA · Universidad de Zaragoza</p>
+        <h1>Tu LEGO ya sabe moverse. <span class="accent">Enséñale a decidir.</span></h1>
+        <p class="lede">Un stack completo en Python para un robot diferencial BrickPi3: slalom, planificación NF1, seguimiento de pelota y reconocimiento de marcadores con ORB + RANSAC. Código, documentación y una guía real para montarlo en tu propio robot.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#integracion">Cómo aplicarlo a tu robot</a>
+          <a class="btn btn-ghost" href="#licencia">Ver licencia y pack</a>
+        </div>
+        <ul class="hero-points" aria-label="Resumen técnico">
+          <li>Python 3.10+</li>
+          <li>BrickPi3</li>
+          <li>OpenCV</li>
+          <li>20/20 tests</li>
+          <li>Sin ROS</li>
+        </ul>
+        <p class="hero-note"><strong>Mismo hardware, distinta estructura:</strong> la página explica qué medir, qué configurar y qué recalibrar antes de mover un motor.</p>
+      </div>
+      <figure class="hero-media">
+        <img src="docs/gifs/orb-ransac.gif" alt="Detección en tiempo real de R2-D2 y BB-8 con ORB y RANSAC sobre la cámara del robot" width="420" height="333">
+        <figcaption class="media-caption">
+          <span class="media-badge">ORB + RANSAC en vivo</span>
+          <span>captura real · 420 × 333</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="wrap stats-grid">
+      <div class="stat"><b>4</b><span>fases autónomas</span><small>slalom · laberinto · pelota · salida</small></div>
+      <div class="stat"><b>20/20</b><span>tests</span><small>cinemática · NF1 · visión</small></div>
+      <div class="stat"><b>3</b><span>demos reales</span><small>GIFs grabados con el robot</small></div>
+      <div class="stat"><b>50 ms</b><span>bucle de odometría</span><small>encoders + giroscopio</small></div>
+    </div>
+  </div>
+
+  <!-- QUÉ ES -->
+  <section class="section" id="producto">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Qué estás comprando</p>
+          <h2>No es un script. Es un stack por capas.</h2>
+        </div>
+        <p>El repositorio separa cinemática, odometría, planificación, visión y misión. Cada capa se puede probar por separado y sustituir sin reescribir las demás. Eso es lo que permite adaptarlo a una estructura distinta del mismo hardware.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <p class="card-kicker">Incluye</p>
+          <h3>La base técnica y la guía de integración</h3>
+          <ul class="checks">
+            <li>Código Python del stack completo, con tests.</li>
+            <li>Documentación de arquitectura, algoritmos y simulación.</li>
+            <li>Guía de despliegue en Raspberry Pi + BrickPi3.</li>
+            <li>Checklist de calibración y tabla de perturbaciones.</li>
+            <li>Los GIFs y figuras reales del proyecto.</li>
+            <li>Licencia de integración con atribución.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <p class="card-kicker">No incluye</p>
+          <h3>Lo que no se vende</h3>
+          <ul class="card-list">
+            <li>El robot, la Raspberry Pi ni el BrickPi3.</li>
+            <li>Las escenas de CoppeliaSim ni la API del curso.</li>
+            <li>Los PDFs, enunciados o material de la asignatura.</li>
+            <li>Una nota, una matrícula ni una garantía de competición.</li>
+            <li>Permiso automático de la universidad: eso se consulta.</li>
+          </ul>
+          <div class="callout" style="margin-bottom:0">
+            <span class="icon">!</span>
+            <div><strong>No es una solución para entregar como trabajo propio.</strong> La licencia exige adaptación, atribución y permiso del profesorado. Está pensado para integrar y aprender, no para copiar y entregar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISIÓN -->
+  <section class="section" id="mision">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">La misión</p>
+          <h2>Cuatro fases, un solo robot.</h2>
+        </div>
+        <p>El robot no ejecuta una secuencia fija: mide, decide y corrige. La misión completa encadena percepción, planificación y control, y cada fase se puede probar por separado.</p>
+      </div>
+
+      <div class="grid-4">
+        <article class="card phase-card" data-step="01">
+          <p class="card-kicker">Fase 1</p>
+          <h3>Slalom</h3>
+          <p>Arcos cronometrados con corrección final contra la pared mediante el ultrasonido. No intenta localizarse durante el recorrido: usa tiempos calibrados y dos checkpoints de distancia.</p>
+          <div class="tags"><span class="tag">ultrasonido</span><span class="tag">tiempos</span></div>
+        </article>
+        <article class="card phase-card" data-step="02">
+          <p class="card-kicker">Fase 2</p>
+          <h3>Laberinto</h3>
+          <p>Planifica con NF1 desde la meta, navega celda a celda y replanifica cuando detecta un obstáculo. Si una arista se bloquea, se elimina del grafo y se reconstruye el campo de costes.</p>
+          <div class="tags"><span class="tag lime">NF1</span><span class="tag">odometría</span></div>
+        </article>
+        <article class="card phase-card" data-step="03">
+          <p class="card-kicker">Fase 3</p>
+          <h3>Pelota</h3>
+          <p>Segmenta el rojo en HSV, se queda con el contorno mayor y usa su área como proxy de distancia. El centroide corrige el giro; el área corrige el avance hasta cerrar la garra.</p>
+          <div class="tags"><span class="tag cyan">HSV</span><span class="tag">visual servo</span></div>
+        </article>
+        <article class="card phase-card" data-step="04">
+          <p class="card-kicker">Fase 4</p>
+          <h3>Salida</h3>
+          <p>Reconoce los marcadores R2-D2 / BB-8 con ORB y una homografía RANSAC. Elige el marcador asignado, se aproxima con el área aparente y cruza la puerta.</p>
+          <div class="tags"><span class="tag">ORB</span><span class="tag">RANSAC</span></div>
+        </article>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <figure class="card" style="padding:10px">
+          <img src="docs/gifs/marker-following.gif" alt="Robot físico acercándose al marcador impreso de BB-8" loading="lazy" style="border-radius:12px;width:100%;max-width:360px;margin:0 auto">
+          <figcaption class="small muted" style="margin-top:10px">Robot real siguiendo el marcador impreso. No es un render.</figcaption>
+        </figure>
+        <figure class="card" style="padding:10px">
+          <img src="docs/gifs/ball-tracking.gif" alt="Robot físico acercándose a una pelota roja" loading="lazy" style="border-radius:12px;width:100%;max-width:360px;margin:0 auto">
+          <figcaption class="small muted" style="margin-top:10px">Robot real aproximándose a la pelota con el servo de área/centroide.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="section" id="como-funciona">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Arquitectura</p>
+          <h2>De los sensores a los motores, sin caja negra.</h2>
+        </div>
+        <p>La misión no llama directamente a los motores. Pasa por una API de robot, un estimador de pose y controladores con lazo cerrado. Esa separación es lo que hace el código testeable y portable.</p>
+      </div>
+
+      <div class="arch" aria-label="Arquitectura por capas">
+        <div class="arch-col">
+          <div class="arch-label">Percibir</div>
+          <div class="arch-node">Cámara Pi</div>
+          <div class="arch-node">Ultrasonido EV3</div>
+          <div class="arch-node">Giroscopio EV3</div>
+          <div class="arch-node">Encoders</div>
+        </div>
+        <div class="arch-col">
+          <div class="arch-label">Estimar</div>
+          <div class="arch-node">Cinemática diferencial</div>
+          <div class="arch-node">Odometría 50 ms</div>
+          <div class="arch-node">Fusión con giro</div>
+          <div class="arch-node">Pose (x, y, θ)</div>
+        </div>
+        <div class="arch-col">
+          <div class="arch-label">Decidir</div>
+          <div class="arch-node">Misión / fases</div>
+          <div class="arch-node">NF1 + replan</div>
+          <div class="arch-node">Waypoints</div>
+          <div class="arch-node">Servo de visión</div>
+        </div>
+        <div class="arch-col">
+          <div class="arch-label">Actuar</div>
+          <div class="arch-node">Motores izquierdo/derecho</div>
+          <div class="arch-node">Garra</div>
+          <div class="arch-node">Parada segura</div>
+          <div class="arch-node">Timeouts</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="margin:6px 0 10px">Módulos que puedes tocar por separado</h3>
+          <div class="table-wrap">
+            <table class="table-fit">
+              <thead><tr><th>Módulo</th><th>Responsabilidad</th></tr></thead>
+              <tbody>
+                <tr><td><code>robot/kinematics.py</code></td><td>Cinemática directa/inversa, integración de pose, ángulos.</td></tr>
+                <tr><td><code>robot/odometry.py</code></td><td>Hilo de odometría, encoders + giroscopio, log CSV opcional.</td></tr>
+                <tr><td><code>robot/mapping.py</code></td><td>Mapa, NF1, gradiente, replanificación, figuras.</td></tr>
+                <tr><td><code>robot/vision.py</code></td><td>HSV de pelota, ORB + RANSAC, servos visuales.</td></tr>
+                <tr><td><code>robot/robot.py</code></td><td>Motores, waypoints, obstáculos, pared, garra.</td></tr>
+                <tr><td><code>robot/mission.py</code></td><td>Selección de arena y secuencia de las cuatro fases.</td></tr>
+                <tr><td><code>robot/hardware.py</code></td><td>Adaptador BrickPi3 y punto de entrada para un simulador.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin:6px 0 10px">Así se arranca la misión</h3>
+          <div class="code">
+            <div class="code-head"><span>python</span><button class="copy" type="button">Copiar</button></div>
+            <pre><code>from robot.config import ARENAS
+from robot.hardware import BrickPiHardware
+from robot.mission import Mission
+from robot.robot import Robot
+
+robot = Robot(BrickPiHardware())
+try:
+    Mission(robot, ARENAS["a"]).run()
+finally:
+    robot.shutdown()</code></pre>
+          </div>
+          <p class="small muted">La misión arranca la odometría, ejecuta las fases en orden y deja la parada segura en <code>finally</code>. Para probar una sola fase: <code>python main.py --phase maze</code>.</p>
+        </div>
+      </div>
+
+      <div class="callout good">
+        <span class="icon">→</span>
+        <div><strong>El bucle real:</strong> la odometría corre en un hilo cada 50 ms; el control de waypoints usa ese mismo periodo; la cámara marca el ritmo en las fases de visión. Todo movimiento tiene timeout y toda parada pasa por <code>Robot.stop()</code>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ -->
+  <section class="section" id="por-que">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Por qué funciona</p>
+          <h2>No hay magia. Hay modelos, lazos y límites.</h2>
+        </div>
+        <p>El robot funciona porque cada decisión se apoya en una medida y cada medida tiene una tolerancia. Esto es lo que hay detrás de las cuatro fases, explicado para que puedas defenderlo en una demo o en una entrevista.</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <p class="card-kicker">01 · Modelo</p>
+          <h3>La cinemática está calibrada</h3>
+          <p>Radio de rueda y distancia entre ruedas convierten velocidades de motor en <code>(v, ω)</code> y de vuelta. Si esos dos números no son los de tu robot, la odometría miente. Por eso la primera calibración es medir y corregir <code>R</code> y <code>L</code>.</p>
+        </article>
+        <article class="card">
+          <p class="card-kicker">02 · Planificación</p>
+          <h3>NF1 no se queda en un mínimo local</h3>
+          <p>El campo de costes se construye con BFS desde la meta. En una rejilla estática, cada paso del gradiente baja exactamente uno, así que el descenso siempre llega. Si una arista se bloquea, se elimina y se reconstruye el campo.</p>
+        </article>
+        <article class="card">
+          <p class="card-kicker">03 · Control</p>
+          <h3>Todo movimiento es lazo cerrado</h3>
+          <p>El giro usa un proporcional con banda muerta; el avance corrige el rumbo y frena cerca del waypoint; la pelota corrige área y centroide. La saturación evita comandos imposibles y el timeout evita bucles infinitos.</p>
+        </article>
+        <article class="card">
+          <p class="card-kicker">04 · Estado</p>
+          <h3>La odometría no va sola</h3>
+          <p>Los encoders dan desplazamiento; el giroscopio da orientación absoluta. El ultrasonido se filtra con mediana de cinco muestras. Si el giro falla, el sistema cae a heading por encoders en vez de romperse.</p>
+        </article>
+        <article class="card">
+          <p class="card-kicker">05 · Visión</p>
+          <h3>La visión verifica, no adivina</h3>
+          <p>ORB propone correspondencias; RANSAC se queda con los inliers y rechaza la homografía si no hay suficientes. La pelota se limpia con morfología y se queda el contorno mayor. No se acepta cualquier frame.</p>
+        </article>
+        <article class="card">
+          <p class="card-kicker">06 · Ingeniería</p>
+          <h3>Los fallos están tipados</h3>
+          <p><code>SensorReadError</code>, <code>GoResult</code> y <code>MissionError</code> distinguen un fallo de sensor, un waypoint bloqueado y un fallo de misión. La parada y el reset del BrickPi están en un <code>finally</code>, no en la suerte.</p>
+        </article>
+      </div>
+
+      <div class="callout danger">
+        <span class="icon">!</span>
+        <div><strong>Lo que NO hace:</strong> no es SLAM, no actualiza un mapa dinámico de costes, la garra no mide fuerza y el slalom es open-loop. Tampoco garantiza una tasa de éxito universal: depende de tu suelo, batería, luz y calibración. Venderlo como magia sería mentir.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <figure class="card" style="padding:10px">
+          <img src="docs/images/planned_path_arena_a.png" alt="Campo de costes NF1 y ruta planificada en la arena A" loading="lazy" style="border-radius:12px;width:100%">
+          <figcaption class="small muted" style="margin-top:10px">Campo de costes NF1 y ruta óptima en la arena A. El gradiente baja un coste por paso; las paredes se leen del mapa.</figcaption>
+        </figure>
+        <figure class="card" style="padding:10px">
+          <img src="docs/images/planned_path_arena_b.png" alt="Campo de costes NF1 y ruta planificada en la arena B" loading="lazy" style="border-radius:12px;width:100%">
+          <figcaption class="small muted" style="margin-top:10px">La misma planificación en la arena B. Si tu mapa cambia, el campo y la ruta se recalculan; no hay una ruta hardcodeada.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRACIÓN -->
+  <section class="section" id="integracion">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Integración</p>
+          <h2>Mismo hardware no significa misma estructura.</h2>
+        </div>
+        <p>Tu robot puede tener los motores en otros puertos, otra distancia entre ruedas, la cámara en otro sitio o una garra distinta. El stack está pensado para absorber eso por configuración y calibración, no reescribiendo la misión.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div>
+            <h3>Mide tu robot antes de tocar código</h3>
+            <p>Anota estos valores. Sin ellos, la mejor planificación del mundo empieza con una pose falsa.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Dato</th><th>Cómo obtenerlo</th><th>Dónde va</th></tr></thead>
+                <tbody>
+                  <tr><td>Radio de rueda <code>R</code></td><td>Diámetro / 2, en cm.</td><td><code>RobotConfig.wheel_radius_cm</code></td></tr>
+                  <tr><td>Distancia entre ruedas <code>L</code></td><td>Centro de contacto izquierdo a derecho, en cm.</td><td><code>RobotConfig.wheel_base_cm</code></td></tr>
+                  <tr><td>Puertos</td><td>Qué motor y sensor está en cada puerto del BrickPi.</td><td><code>RobotConfig.*_port</code></td></tr>
+                  <tr><td>Sentido de giro</td><td>Rueda positiva = avance; si no, invierte el cable o el signo.</td><td>Montaje / configuración</td></tr>
+                  <tr><td>Cámara</td><td>Índice, resolución y ángulo; prueba con <code>tools/detect_markers.py</code>.</td><td><code>VisionConfig</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">02</div>
+          <div>
+            <h3>Clona y valida en tu PC, sin robot</h3>
+            <p>Primero comprueba que el planner y los tests funcionan. Así separas un fallo de software de un fallo de hardware.</p>
+            <div class="code">
+              <div class="code-head"><span>bash · PC</span><button class="copy" type="button">Copiar</button></div>
+              <pre><code>git clone https://github.com/sejotta/lego-autonomous-robot.git
+cd lego-autonomous-robot
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python demo.py --map maps/arena_a.txt --start 1 2 --goal 3 3</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">03</div>
+          <div>
+            <h3>Ajusta la geometría y los puertos</h3>
+            <p>Empieza por <code>robot/config.py</code>. Si tu robot no tiene giroscopio, cambia <code>heading_source</code> a <code>"encoders"</code>; el resto del stack sigue funcionando.</p>
+            <div class="code">
+              <div class="code-head"><span>python · config</span><button class="copy" type="button">Copiar</button></div>
+              <pre><code>from robot.config import RobotConfig
+
+cfg = RobotConfig(
+    wheel_radius_cm=2.6,       # mide tu rueda
+    wheel_base_cm=15.0,        # mide tu chasis
+    left_motor_port="C",
+    right_motor_port="D",
+    gripper_motor_port="B",
+    ultrasonic_port="1",
+    gyro_port="3",
+    light_port="4",
+    heading_source="gyro",     # "encoders" si no tienes giroscopio
+)</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">04</div>
+          <div>
+            <h3>Adapta el hardware, no la misión</h3>
+            <p>Si usas el mismo BrickPi3, el adaptador incluido suele bastar. Si tu estructura cambia la electrónica, implementa el pequeño protocolo <code>Hardware</code>: la misión no necesita saber qué hay debajo.</p>
+            <div class="code">
+              <div class="code-head"><span>python · hardware</span><button class="copy" type="button">Copiar</button></div>
+              <pre><code>class MiHardware:
+    def set_motor_dps(self, port, dps): ...
+    def get_encoder(self, port): ...
+    def reset_encoder(self, port): ...
+    def set_sensor_type(self, port, sensor_type): ...
+    def read_ultrasonic(self, port): ...
+    def read_gyro(self, port): ...
+    def read_light(self, port): ...
+    def reset_all(self): ...</code></pre>
+            </div>
+            <p class="small muted">El adaptador también es el punto de entrada para un simulador: no hay que tocar <code>Mission</code>, <code>Robot</code> ni la visión.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">05</div>
+          <div>
+            <h3>Cambia el mapa y las celdas</h3>
+            <p>El formato de mapa es una cabecera <code>sizeX sizeY sizeCell</code> y una matriz de conexiones. Si tu arena es distinta, crea tu mapa y define inicio, meta y marcador asignado en <code>ARENAS</code>.</p>
+            <div class="code">
+              <div class="code-head"><span>text · maps/mi_arena.txt</span><button class="copy" type="button">Copiar</button></div>
+              <pre><code>7 7 400
+0 0 0 1 0 0 0 1 0 0 0 0 0 1 0
+0 1 1 1 1 1 0 1 1 1 1 1 1 1 0
+... 15 filas de 15 valores ...</code></pre>
+            </div>
+            <p class="small muted">La celda se mide en milímetros en el fichero; el stack la convierte a centímetros. El centro de la celda <code>(1, 2)</code> con celdas de 40 cm es <code>(60, 100)</code>.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">06</div>
+          <div>
+            <h3>Calibra cada fase, en este orden</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Fase</th><th>Qué calibrar</th><th>Señal de que va bien</th></tr></thead>
+                <tbody>
+                  <tr><td>Maze</td><td><code>R</code>, <code>L</code>, tolerancia de waypoint, umbral de obstáculo.</td><td>Llega a la celda sin corregir a mano y no se atasca.</td></tr>
+                  <tr><td>Ball</td><td>Rangos HSV, área objetivo, tolerancia de centro.</td><td>Se centra y se detiene a la distancia de la garra.</td></tr>
+                  <tr><td>Exit</td><td>Área del marcador, features ORB, inliers mínimos.</td><td>Detecta el marcador correcto y no el otro.</td></tr>
+                  <tr><td>Slalom</td><td>Tiempos de arco, distancia a pared, velocidad.</td><td>Termina alineado en los dos checkpoints.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="small muted" style="margin-top:10px">Cambia una cosa a la vez y vuelve a medir. Si tocas geometría y visión a la vez, no sabrás qué ha fallado.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">07</div>
+          <div>
+            <h3>Valida por fases y después encadena</h3>
+            <p>No lances la misión completa el primer día. Prueba una fase, mira el log y solo entonces pasa a la siguiente.</p>
+            <div class="code">
+              <div class="code-head"><span>bash · Raspberry Pi</span><button class="copy" type="button">Copiar</button></div>
+              <pre><code>python main.py --arena a --phase maze
+python main.py --arena a --phase ball
+python main.py --arena a --phase door
+python main.py --arena auto</code></pre>
+            </div>
+            <div class="grid-2" style="margin-top:12px">
+              <ul class="checks">
+                <li>Ruedas al aire y robot sujeto en la primera prueba.</li>
+                <li>Un solo motor a la vez antes de la misión.</li>
+                <li>Ultrasonido responde a la mano.</li>
+              </ul>
+              <ul class="checks">
+                <li>La cámara abre en el índice correcto.</li>
+                <li>El log de odometría tiene sentido.</li>
+                <li>La parada de emergencia funciona.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout good">
+        <span class="icon">✓</span>
+        <div><strong>Orden correcto:</strong> geometría → puertos → odometría → mapa → waypoints → pelota → marcadores → slalom → misión completa. Saltarse el orden es la forma más rápida de culpar al código de un problema de calibración.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERTURBACIONES -->
+  <section class="section" id="perturbaciones">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Perturbaciones</p>
+          <h2>Tu robot no será el mío. Esta tabla es la diferencia.</h2>
+        </div>
+        <p>El mismo hardware puede comportarse distinto por ruedas, batería, suelo, luz o montaje. Estas son las perturbaciones que el código ya contempla y lo que tienes que recalibrar tú.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Perturbación</th><th>Síntoma</th><th>Mitigación en el stack</th><th>Qué recalibrar</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ruedas distintas / patinaje</strong></td><td>La pose deriva aunque el robot “vaya recto”.</td><td>Giroscopio para el heading, integración midpoint y resets en celdas conocidas.</td><td><code>R</code>, <code>L</code> y el suelo de la arena.</td></tr>
+            <tr><td><strong>Batería baja</strong></td><td>El robot avanza menos de lo esperado y el slalom se queda corto.</td><td>Lazos cerrados, timeouts y saturación de velocidad.</td><td>Tiempos de slalom y velocidad máxima.</td></tr>
+            <tr><td><strong>Ultrasonido ruidoso</strong></td><td>Falsos bloqueos o un obstáculo que “desaparece”.</td><td>Mediana de 5 muestras y umbral de 25 cm.</td><td><code>obstacle_threshold_cm</code> y altura del sensor.</td></tr>
+            <tr><td><strong>Luz / reflejos</strong></td><td>El rojo se pierde o aparece en el fondo.</td><td>Dos rangos HSV, apertura morfológica y contorno mayor.</td><td>HSV, exposición y área objetivo.</td></tr>
+            <tr><td><strong>Marcador inclinado o lejos</strong></td><td>La homografía se va o detecta el marcador equivocado.</td><td>ORB con 1000 features, matching cruzado, RANSAC e inliers mínimos.</td><td>Área objetivo, inliers y tamaño de impresión.</td></tr>
+            <tr><td><strong>Latencia de cámara</strong></td><td>El servo corrige tarde y oscila.</td><td>Resolución 320×240, bucle de 50 ms y bandas de tolerancia.</td><td>Resolución, FPS y ganancias.</td></tr>
+            <tr><td><strong>Estructura distinta</strong></td><td>Gira al revés, avanza torcido o no conoce la celda.</td><td>Puertos y geometría por configuración; mapa y <code>ARENAS</code> editables.</td><td>Puertos, <code>R</code>, <code>L</code>, mapa y pose inicial.</td></tr>
+            <tr><td><strong>Fallo de sensor</strong></td><td>Una lectura vacía o una excepción.</td><td>Errores tipados, fallback de giro a encoders y timeouts.</td><td>Cableado, puerto y tipo de sensor.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-3" style="margin-top:16px">
+        <div class="card"><p class="card-kicker">Regla 1</p><h3>Primero geometría</h3><p>Si <code>R</code> o <code>L</code> están mal, todo lo demás está mal. Mide, prueba 100 cm en línea recta y un giro de 360°.</p></div>
+        <div class="card"><p class="card-kicker">Regla 2</p><h3>Luego el mapa</h3><p>La planificación solo es tan buena como la celda, la conexión y la pose inicial que le das.</p></div>
+        <div class="card"><p class="card-kicker">Regla 3</p><h3>Después la visión</h3><p>La cámara no perdona una mala exposición. Ajusta HSV con el robot en la arena, no en una foto de escritorio.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPLOY -->
+  <section class="section" id="deploy">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Deploy</p>
+          <h2>De tu portátil a la Raspberry Pi.</h2>
+        </div>
+        <p>El despliegue no es solo copiar el repo. Es preparar la Pi, habilitar cámara e I2C, instalar BrickPi3, calibrar y arrancar por fases. Aquí tienes el camino completo.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <p class="card-kicker">Paso A · PC</p>
+          <h3>Validar antes de tocar el robot</h3>
+          <div class="code">
+            <div class="code-head"><span>bash</span><button class="copy" type="button">Copiar</button></div>
+            <pre><code>git clone https://github.com/sejotta/lego-autonomous-robot.git
+cd lego-autonomous-robot
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python demo.py --map maps/arena_a.txt --start 1 2 --goal 3 3</code></pre>
+          </div>
+          <p class="small muted">Si esto falla, no sigas. Es más barato depurar en el portátil que con el robot en el suelo.</p>
+        </div>
+
+        <div class="card">
+          <p class="card-kicker">Paso B · Raspberry Pi</p>
+          <h3>Preparar el hardware</h3>
+          <div class="code">
+            <div class="code-head"><span>bash · Raspberry Pi</span><button class="copy" type="button">Copiar</button></div>
+            <pre><code>sudo raspi-config
+# Interface Options → Camera / I2C → Enable
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -r requirements-hardware.txt   # brickpi3
+python main.py --arena a --phase maze</code></pre>
+          </div>
+          <p class="small muted">El paquete <code>brickpi3</code> solo se instala en la Pi. El resto del stack funciona en el portátil sin hardware.</p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <p class="card-kicker">Paso C · Arranque manual</p>
+          <h3>Primera misión, por fases</h3>
+          <div class="code">
+            <div class="code-head"><span>bash</span><button class="copy" type="button">Copiar</button></div>
+            <pre><code># Robot sujeto y ruedas al aire
+python main.py --arena a --phase maze --log-level DEBUG
+
+# Cuando el maze esté calibrado
+python main.py --arena a --phase ball
+python main.py --arena a --phase door
+
+# Misión completa
+python main.py --arena auto</code></pre>
+          </div>
+        </div>
+        <div class="card">
+          <p class="card-kicker">Paso D · Servicio</p>
+          <h3>Arranque automático opcional</h3>
+          <p class="small muted">Solo cuando la misión ya funciona a mano. Un servicio que arranca solo puede mover el robot al encender.</p>
+          <div class="code code-wrap">
+            <div class="code-head"><span>systemd · /etc/systemd/system/robot.service</span><button class="copy" type="button">Copiar</button></div>
+            <pre><code>[Unit]
+Description=LEGO autonomous robot mission
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/lego-autonomous-robot
+ExecStart=/home/pi/lego-autonomous-robot/.venv/bin/python \
+    main.py --arena auto
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <span class="icon">!</span>
+        <div><strong>Seguridad:</strong> no arranques la misión con el robot en el suelo y las ruedas libres sin tener a mano el interruptor de apagado. El código para motores en <code>finally</code>, pero no puede evitar una caída, un cable suelto o una batería mal sujeta.</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <p class="card-kicker">Publicar esta página</p>
+          <h3>GitHub Pages</h3>
+          <p class="small muted">El archivo <code>index.html</code> está en la raíz del repo. Para publicarlo:</p>
+          <ol class="small muted" style="margin:10px 0 0">
+            <li>GitHub → Settings → Pages.</li>
+            <li>Deploy from a branch → <code>main</code> → <code>/ (root)</code>.</li>
+            <li>Guardar y abrir la URL del proyecto.</li>
+          </ol>
+          <p class="small muted" style="margin-top:10px">URL esperada: <code>https://sejotta.github.io/lego-autonomous-robot/</code></p>
+        </div>
+        <div class="card">
+          <p class="card-kicker">Actualizar</p>
+          <h3>Cuando cambies el código</h3>
+          <div class="code">
+            <div class="code-head"><span>bash</span><button class="copy" type="button">Copiar</button></div>
+            <pre><code>cd lego-autonomous-robot
+git pull origin main
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m unittest discover -s tests -v</code></pre>
+          </div>
+          <p class="small muted">Si cambias la geometría o el mapa, vuelve a la sección de integración y recalibra.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LICENCIA -->
+  <section class="section" id="licencia">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Licencia y pack</p>
+          <h2>El código se ve. La integración se licencia.</h2>
+        </div>
+        <p>El repositorio es público para consulta y estudio, pero su licencia no permite reutilizarlo sin permiso. La licencia de integración autoriza el uso en tu robot, con atribución y con las condiciones académicas que correspondan.</p>
+      </div>
+
+      <!-- EDIT: define aquí tus precios, tu correo y las condiciones finales. -->
+      <div class="pricing">
+        <article class="card price-card">
+          <p class="card-kicker">Individual</p>
+          <h3>Un robot</h3>
+          <div class="price">A consultar <small>/ licencia</small></div>
+          <p class="small muted">Para un equipo que quiere integrar el stack en su propio robot y aprender cómo está hecho.</p>
+          <ul class="checks">
+            <li>Acceso al código y a la documentación.</li>
+            <li>Guía de integración y calibración.</li>
+            <li>Permiso de uso en un robot.</li>
+            <li>Atribución a autores y profesorado.</li>
+          </ul>
+          <a class="btn btn-ghost btn-wide" href="#contacto">Solicitar propuesta</a>
+        </article>
+
+        <article class="card price-card featured">
+          <p class="card-kicker">Equipo</p>
+          <h3>Hasta 3 robots</h3>
+          <div class="price">A consultar <small>/ equipo</small></div>
+          <p class="small muted">Para un grupo que comparte arena, quiere varias copias y necesita una puesta en marcha acompañada.</p>
+          <ul class="checks">
+            <li>Todo lo de la licencia individual.</li>
+            <li>Hasta 3 robots del mismo equipo.</li>
+            <li>Sesión de onboarding técnica.</li>
+            <li>Revisión de configuración y mapa.</li>
+          </ul>
+          <a class="btn btn-primary btn-wide" href="#contacto">Solicitar propuesta</a>
+        </article>
+
+        <article class="card price-card">
+          <p class="card-kicker">Integración guiada</p>
+          <h3>Llave en mano</h3>
+          <div class="price">A consultar <small>/ sesión</small></div>
+          <p class="small muted">Para quien quiere verlo funcionar en su robot sin pelearse con la primera puesta en marcha.</p>
+          <ul class="checks">
+            <li>Sesión remota de despliegue.</li>
+            <li>Calibración de geometría y mapa.</li>
+            <li>Prueba de fases y checklist final.</li>
+            <li>Informe de qué se ha cambiado.</li>
+          </ul>
+          <a class="btn btn-ghost btn-wide" href="#contacto">Solicitar propuesta</a>
+        </article>
+      </div>
+
+      <div class="grid-2" style="margin-top:16px">
+        <div class="card">
+          <p class="card-kicker">Qué significa “licencia”</p>
+          <h3>Permiso, no transferencia de autoría</h3>
+          <ul class="checks">
+            <li>Puedes leer, estudiar y evaluar el código libremente.</li>
+            <li>Para reutilizarlo o modificarlo necesitas permiso escrito.</li>
+            <li>El uso académico requiere además permiso del profesorado.</li>
+            <li>Siempre hay que acreditar a los autores y a la asignatura.</li>
+            <li>No se permite revender ni redistribuir el pack.</li>
+          </ul>
+          <p class="small muted" style="margin-top:12px">La licencia completa está en <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/LICENSE.md" target="_blank" rel="noopener" style="color:var(--lime)">LICENSE.md</a>.</p>
+        </div>
+        <div class="card">
+          <p class="card-kicker">Aviso académico</p>
+          <h3>Esto no es una práctica para entregar</h3>
+          <p>El pack está pensado para integrar, adaptar y aprender. Comprar una licencia no convierte el proyecto en tu trabajo original ni autoriza a presentarlo como entrega propia.</p>
+          <p>Antes de usarlo en una asignatura, habla con el profesorado y respeta la normativa de la Universidad de Zaragoza. La autoría es de <strong>Sergio Toro Codo</strong> y <strong>Guillén Sainctavit</strong>, con la guía del profesorado de Robots Autónomos.</p>
+          <div class="callout danger" style="margin-bottom:0">
+            <span class="icon">!</span>
+            <div><strong>Si buscas copiar y entregar, este pack no es para ti.</strong> Si buscas entenderlo, adaptarlo y defenderlo, sí.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout good" style="margin-top:16px">
+        <span class="icon">→</span>
+        <div><strong>¿Por qué tiene sentido pagar por esto?</strong> Porque no compras un ZIP: compras una base probada, una guía de integración y el tiempo de alguien que ya se ha peleado con la geometría, el mapa, la luz y los marcadores. El código es público; el permiso y el acompañamiento son el producto.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Preguntas frecuentes</p>
+          <h2>Lo que conviene saber antes de comprar.</h2>
+        </div>
+        <p>Si tu duda no está aquí, escríbeme por GitHub con el modelo de robot, los puertos y la arena. Con esos datos puedo decirte qué habría que cambiar.</p>
+      </div>
+
+      <div class="faq">
+        <details>
+          <summary>¿Necesito exactamente el mismo robot?</summary>
+          <div class="answer"><p>El mismo hardware ayuda mucho, pero la estructura puede cambiar. Tendrás que medir radio de rueda y distancia entre ruedas, revisar puertos y sentidos de giro, y crear el mapa de tu arena. El stack está separado para que esos cambios no obliguen a reescribir la misión.</p></div>
+        </details>
+        <details>
+          <summary>¿Sirve si mi robot tiene otra estructura o una garra distinta?</summary>
+          <div class="answer"><p>Sí, siempre que adaptes la geometría, los puertos y la garra. La garra es tiempo-controlada; si la tuya necesita posición o fuerza, habrá que cambiar esa parte concreta. La planificación y la visión no dependen de la forma del chasis.</p></div>
+        </details>
+        <details>
+          <summary>¿Puedo usar mi propia cámara y mi propia arena?</summary>
+          <div class="answer"><p>Sí. La cámara se configura con <code>VisionConfig</code> (índice, resolución, HSV y áreas objetivo). La arena se define con un mapa y una entrada en <code>ARENAS</code>. Si cambia la celda, cambia el mapa y vuelve a validar el NF1.</p></div>
+        </details>
+        <details>
+          <summary>¿Incluye las escenas de CoppeliaSim o el material del curso?</summary>
+          <div class="answer"><p>No. El proceso de simulación está documentado, pero las escenas, la API del curso, los PDFs y los enunciados no se venden ni se redistribuyen. El repo se centra en el código propio del robot.</p></div>
+        </details>
+        <details>
+          <summary>¿Funciona sin cámara o sin giroscopio?</summary>
+          <div class="answer"><p>Sin cámara puedes usar el slalom y el laberinto, pero no la pelota ni el reconocimiento de marcadores. Sin giroscopio puedes poner <code>heading_source="encoders"</code>; la odometría será más sensible a la deriva y tendrás que resetear en celdas conocidas.</p></div>
+        </details>
+        <details>
+          <summary>¿Qué nivel de Python necesito?</summary>
+          <div class="answer"><p>Intermedio: leer clases, editar un dict de configuración, ejecutar tests y mirar logs. La parte de visión y la de cinemática están documentadas, pero no es un proyecto para alguien que nunca ha programado.</p></div>
+        </details>
+        <details>
+          <summary>¿Puedo redistribuirlo o venderlo a otros?</summary>
+          <div class="answer"><p>No sin permiso escrito. La licencia permite consulta y estudio, pero la reutilización, modificación y redistribución requieren autorización. Tampoco se puede quitar la atribución a los autores ni al profesorado.</p></div>
+        </details>
+        <details>
+          <summary>¿Garantiza aprobar o ganar la competición?</summary>
+          <div class="answer"><p>No. Es una base técnica y una guía de integración. El resultado depende de tu calibración, tu hardware, tu arena y las condiciones de la prueba. Cualquier promesa de nota o de victoria sería falsa.</p></div>
+        </details>
+        <details>
+          <summary>¿Cómo sé que el código funciona?</summary>
+          <div class="answer"><p>El repo incluye 20 tests, un demo de planificación sin robot y tres GIFs grabados con el robot. La misión completa requiere hardware y calibración; no publico una tasa de éxito que no haya medido.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="section section-tight" id="contacto">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <p class="eyebrow">Contacto</p>
+          <h2>Hablemos de tu robot.</h2>
+          <p>Cuéntame qué robot tienes, en qué puertos están los motores y sensores, qué arena vas a usar y para cuándo lo necesitas. Con eso puedo decirte qué partes del stack encajan y cuáles habría que adaptar.</p>
+          <div class="contact-actions">
+            <a class="btn btn-primary" href="https://github.com/sejotta" target="_blank" rel="noopener">Escribir por GitHub</a>
+            <a class="btn btn-ghost" href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">Ver repositorio</a>
+          </div>
+        </div>
+        <aside class="contact-aside">
+          <p><strong>Asunto sugerido</strong><br><code>Licencia robot autónomo · [tu universidad]</code></p>
+          <p><strong>Incluye</strong><br>Modelo de robot, puertos, sensores, cámara y arena.</p>
+          <p><strong>Respuesta</strong><br>Te digo qué licencia tiene sentido y qué habría que calibrar.</p>
+          <p class="small muted" style="margin:0">También puedes abrir una consulta en GitHub. No compartas datos personales de terceros.</p>
+          <!-- EDIT: si quieres, añade aquí tu correo o un formulario. -->
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <span class="brand-mark">AMR</span>
+          <strong>LEGO Autonomous Robot</strong>
+        </div>
+        <p style="max-width:44ch">Stack de autonomía para un robot diferencial LEGO + BrickPi3. Proyecto de la asignatura <strong>Robots Autónomos</strong>, EINA, Universidad de Zaragoza.</p>
+        <p class="small">© 2026 Sergio Toro Codo y Guillén Sainctavit. Código source-available: consulta libre, reutilización con permiso.</p>
+      </div>
+      <div>
+        <p class="footer-title">Proyecto</p>
+        <div class="footer-links">
+          <a href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">Repositorio</a>
+          <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/README.md" target="_blank" rel="noopener">README</a>
+          <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/docs/VALIDATION.md" target="_blank" rel="noopener">Validación</a>
+          <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/docs/SIMULATION.md" target="_blank" rel="noopener">Simulación</a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-title">Legal</p>
+        <div class="footer-links">
+          <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/LICENSE.md" target="_blank" rel="noopener">Licencia</a>
+          <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/assets/markers/NOTICE.md" target="_blank" rel="noopener">Marcadores y marcas</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+        <p class="small" style="margin-top:12px">No es una publicación oficial de la Universidad de Zaragoza. R2-D2 y BB-8 son marcas de sus titulares.</p>
+      </div>
+    </div>
+    <div class="legal">
+      <span>Hecho con Python, OpenCV y demasiadas pruebas en el suelo.</span>
+      <span>EINA · Universidad de Zaragoza · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // Copy buttons
+  document.querySelectorAll(".copy").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var code = button.closest(".code");
+      var pre = code ? code.querySelector("pre") : null;
+      if (!pre) return;
+      var text = pre.innerText;
+      var done = function () {
+        var old = button.textContent;
+        button.textContent = "Copiado";
+        button.classList.add("copied");
+        setTimeout(function () {
+          button.textContent = old;
+          button.classList.remove("copied");
+        }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {});
+      } else {
+        var area = document.createElement("textarea");
+        area.value = text;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand("copy"); done(); } catch (error) {}
+        document.body.removeChild(area);
+      }
+    });
+  });
+
+  // Active section in nav
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".site-nav a"));
+  var sections = navLinks
+    .map(function (link) { return document.querySelector(link.getAttribute("href")); })
+    .filter(Boolean);
+
+  if ("IntersectionObserver" in window && sections.length) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var id = "#" + entry.target.id;
+        navLinks.forEach(function (link) {
+          link.classList.toggle("active", link.getAttribute("href") === id);
+        });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+})();
+</script>
+</body>
+</html>
