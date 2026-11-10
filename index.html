@@ -6,7 +6,7 @@
 <title>LEGO Autonomous Robot · Kit de integración</title>
 <meta name="description" content="Stack completo en Python para un robot diferencial BrickPi3: slalom, planificación NF1, seguimiento de pelota y reconocimiento ORB/RANSAC. Código, documentación y guía de integración.">
 <meta name="author" content="Sergio Toro Codo, Guillén Sainctavit">
-<meta name="theme-color" content="#070a0f">
+<meta name="theme-color" content="#f7f9f4">
 <meta property="og:type" content="website">
 <meta property="og:title" content="LEGO Autonomous Robot · Kit de integración">
 <meta property="og:description" content="Slalom, NF1, pelota y ORB/RANSAC en un stack Python para BrickPi3. Código, tests, documentación y guía de despliegue.">
@@ -393,6 +393,131 @@ td code,th code{color:var(--cyan);background:rgba(92,225,255,.08);padding:1px 5p
   .hero-actions .btn{width:100%}
   .contact{padding:20px}
 }
+
+/* ============================================================
+   Tema claro
+   ============================================================ */
+:root{
+  --bg:#f7f9f4;
+  --bg-2:#eef3ed;
+  --panel:#ffffff;
+  --panel-solid:#ffffff;
+  --line:rgba(16,38,25,.12);
+  --line-strong:rgba(16,38,25,.22);
+  --text:#102018;
+  --muted:#53675b;
+  --muted-2:#5f7265;
+  --accent:#2f6b45;
+  --accent-strong:#17452e;
+  --accent-soft:rgba(47,107,69,.09);
+  --lime:#c9ef5a;
+  --lime-soft:rgba(150,190,60,.16);
+  --cyan:#197b8c;
+  --cyan-soft:rgba(25,123,140,.10);
+  --orange:#9a5a1c;
+  --red:#b23a3a;
+}
+body{
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(110,170,120,.16), transparent 62%),
+    radial-gradient(760px 520px at 92% 6%, rgba(183,227,74,.18), transparent 62%),
+    var(--bg);
+  color:var(--text);
+}
+body::before{
+  background-image:
+    linear-gradient(rgba(16,38,25,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16,38,25,.055) 1px, transparent 1px);
+}
+::selection{background:var(--accent-strong);color:#fff}
+strong{color:var(--accent-strong)}
+.site-header{background:rgba(247,249,244,.88);border-bottom-color:var(--line)}
+.brand-mark{
+  background:linear-gradient(145deg,#e6f3d3,#dcefe9);
+  border-color:rgba(47,107,69,.28);
+  color:var(--accent-strong);
+}
+.site-nav{color:var(--muted)}
+.site-nav a:hover,.site-nav a.active{color:var(--accent-strong)}
+.site-nav a::after{background:var(--accent)}
+.btn{background:#fff;border-color:var(--line-strong);color:var(--text)}
+.btn:hover{background:#f0f6ea;border-color:rgba(47,107,69,.45);color:var(--accent-strong)}
+.btn-primary{background:var(--lime);border-color:#b5d94b;color:#112015;box-shadow:0 10px 25px rgba(80,120,30,.12)}
+.btn-primary:hover{background:#d7f57a;color:#112015;box-shadow:0 12px 28px rgba(80,120,30,.18)}
+.eyebrow{color:var(--accent)}
+h1 .accent{color:var(--accent)}
+.hero-note{color:var(--muted-2)}
+.hero-note strong{color:var(--muted)}
+.hero-points li{background:#fff;border-color:var(--line);color:var(--muted)}
+.hero-media{
+  background:linear-gradient(145deg,#fff,#f0f6e9);
+  border-color:var(--line);
+  box-shadow:0 24px 60px rgba(30,60,40,.10);
+}
+.hero-media::before{background:radial-gradient(circle,rgba(120,180,90,.18),transparent 65%)}
+.hero-media img{border-color:rgba(16,38,25,.10)}
+.media-caption{color:var(--muted-2)}
+.media-badge{color:var(--accent)}
+.media-badge::before{background:var(--accent);box-shadow:none}
+.stats{background:#eef4ea;border-color:var(--line)}
+.stat{border-color:var(--line)}
+.stat b{color:var(--accent-strong)}
+.stat span,.stat small{color:var(--muted)}
+.card{background:#fff;border-color:var(--line);box-shadow:0 1px 0 rgba(16,38,25,.03)}
+.card:hover{background:#fbfdf8;border-color:rgba(47,107,69,.35);box-shadow:0 12px 30px rgba(30,60,40,.07)}
+.card p{color:var(--muted)}
+.card-kicker{color:var(--accent)}
+.card-list li::before,.checks li::before{color:var(--accent)}
+.phase-card::after{color:rgba(16,38,25,.05)}
+.tag{background:#f4f8ef;border-color:var(--line);color:var(--muted)}
+.tag.lime{color:var(--accent);border-color:rgba(47,107,69,.28);background:var(--accent-soft)}
+.tag.cyan{color:var(--cyan);border-color:rgba(25,123,140,.25);background:var(--cyan-soft)}
+.arch-col{background:#fff;border-color:var(--line)}
+.arch-col:not(:last-child)::after{color:var(--accent)}
+.arch-label{color:var(--accent)}
+.arch-node{border-color:var(--line);color:var(--muted)}
+.table-wrap{background:#fff;border-color:var(--line)}
+th{background:#eef4ea;color:var(--muted);border-color:var(--line)}
+td{border-color:var(--line);color:var(--muted)}
+td code,th code{color:var(--accent-strong);background:var(--accent-soft)}
+.code{background:#f4f7f1;border-color:var(--line);box-shadow:none}
+.code-head{background:#eaf1e5;color:var(--muted);border-color:var(--line)}
+.code pre{color:#1c3a2a}
+.code pre::-webkit-scrollbar-track{background:#f4f7f1}
+.code pre::-webkit-scrollbar-thumb{background:#b7c9b7}
+.code pre::-webkit-scrollbar-thumb:hover{background:#9fb59f}
+.copy{background:#fff;border-color:var(--line);color:var(--muted)}
+.copy:hover{background:#e9f3dc;border-color:rgba(47,107,69,.45);color:var(--accent-strong)}
+.copy.copied{background:var(--accent);border-color:var(--accent);color:#fff}
+.callout{border-color:rgba(154,90,28,.22);border-left-color:var(--orange);background:#fdf6ec;color:#5a4326}
+.callout strong{color:#3d2b14}
+.callout .icon{color:var(--orange)}
+.callout.danger{border-color:rgba(178,58,58,.22);border-left-color:var(--red);background:#fdf0ef;color:#5c2b2b}
+.callout.danger .icon{color:var(--red)}
+.callout.good{border-color:rgba(47,107,69,.22);border-left-color:var(--accent);background:#f0f7e9;color:#2f4a2c}
+.callout.good .icon{color:var(--accent)}
+.step{border-color:var(--line)}
+.step-num{background:var(--accent-soft);border-color:rgba(47,107,69,.3);color:var(--accent-strong)}
+.step p{color:var(--muted)}
+.faq details{background:#fff;border-color:var(--line)}
+.faq details[open]{background:#f6faef;border-color:rgba(47,107,69,.28)}
+.faq summary::after{color:var(--accent)}
+.faq .answer{color:var(--muted)}
+.contact{
+  background:
+    radial-gradient(600px 260px at 10% 0%, rgba(160,200,90,.18), transparent 70%),
+    linear-gradient(160deg,#fff,#f0f7e8);
+  border-color:rgba(47,107,69,.24);
+}
+.contact p{color:var(--muted)}
+.contact-aside{border-color:var(--line)}
+.contact-aside code{color:var(--accent-strong)}
+.site-footer{border-color:var(--line);color:var(--muted)}
+.footer-brand{color:var(--text)}
+.footer-links a{color:var(--muted)}
+.footer-links a:hover{color:var(--accent-strong)}
+.footer-title{color:var(--muted-2)}
+.legal{color:var(--muted-2)}
 </style>
 </head>
 <body>
@@ -410,9 +535,8 @@ td code,th code{color:var(--cyan);background:rgba(92,225,255,.08);padding:1px 5p
       <a href="#por-que">Por qué funciona</a>
       <a href="#integracion">Integración</a>
       <a href="#deploy">Deploy</a>
-      <a href="#licencia">Licencia</a>
     </nav>
-    <a class="btn btn-primary btn-sm header-cta" href="#contacto">Solicitar licencia</a>
+    <a class="btn btn-primary btn-sm header-cta" href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">GitHub</a>
   </div>
 </header>
 
@@ -427,7 +551,7 @@ td code,th code{color:var(--cyan);background:rgba(92,225,255,.08);padding:1px 5p
         <p class="lede">Un stack completo en Python para un robot diferencial BrickPi3: slalom, planificación NF1, seguimiento de pelota y reconocimiento de marcadores con ORB + RANSAC. Código, documentación y una guía real para montarlo en tu propio robot.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#integracion">Cómo aplicarlo a tu robot</a>
-          <a class="btn btn-ghost" href="#licencia">Ver licencia y pack</a>
+          <a class="btn btn-ghost" href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">Ver repositorio</a>
         </div>
         <ul class="hero-points" aria-label="Resumen técnico">
           <li>Python 3.10+</li>
@@ -463,7 +587,7 @@ td code,th code{color:var(--cyan);background:rgba(92,225,255,.08);padding:1px 5p
     <div class="wrap">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Qué estás comprando</p>
+          <p class="eyebrow">Qué vas a encontrar</p>
           <h2>No es un script. Es un stack por capas.</h2>
         </div>
         <p>El repositorio separa cinemática, odometría, planificación, visión y misión. Cada capa se puede probar por separado y sustituir sin reescribir las demás. Eso es lo que permite adaptarlo a una estructura distinta del mismo hardware.</p>
@@ -479,22 +603,21 @@ td code,th code{color:var(--cyan);background:rgba(92,225,255,.08);padding:1px 5p
             <li>Guía de despliegue en Raspberry Pi + BrickPi3.</li>
             <li>Checklist de calibración y tabla de perturbaciones.</li>
             <li>Los GIFs y figuras reales del proyecto.</li>
-            <li>Licencia de integración con atribución.</li>
+            <li>Enlace al repositorio y a la documentación.</li>
           </ul>
         </div>
         <div class="card">
           <p class="card-kicker">No incluye</p>
-          <h3>Lo que no se vende</h3>
+          <h3>Lo que queda fuera</h3>
           <ul class="card-list">
             <li>El robot, la Raspberry Pi ni el BrickPi3.</li>
             <li>Las escenas de CoppeliaSim ni la API del curso.</li>
             <li>Los PDFs, enunciados o material de la asignatura.</li>
             <li>Una nota, una matrícula ni una garantía de competición.</li>
-            <li>Permiso automático de la universidad: eso se consulta.</li>
           </ul>
           <div class="callout" style="margin-bottom:0">
             <span class="icon">!</span>
-            <div><strong>No es una solución para entregar como trabajo propio.</strong> La licencia exige adaptación, atribución y permiso del profesorado. Está pensado para integrar y aprender, no para copiar y entregar.</div>
+            <div><strong>Es una base para integrar y aprender.</strong> Si lo usas en una asignatura, respeta sus normas y acredita el trabajo de sus autores.</div>
           </div>
         </div>
       </div>
@@ -684,7 +807,7 @@ finally:
 
       <div class="callout danger">
         <span class="icon">!</span>
-        <div><strong>Lo que NO hace:</strong> no es SLAM, no actualiza un mapa dinámico de costes, la garra no mide fuerza y el slalom es open-loop. Tampoco garantiza una tasa de éxito universal: depende de tu suelo, batería, luz y calibración. Venderlo como magia sería mentir.</div>
+        <div><strong>Lo que NO hace:</strong> no es SLAM, no actualiza un mapa dinámico de costes, la garra no mide fuerza y el slalom es open-loop. Tampoco garantiza una tasa de éxito universal: depende de tu suelo, batería, luz y calibración. Presentarlo como magia sería mentir.</div>
       </div>
 
       <div class="grid-2" style="margin-top:16px">
@@ -1021,101 +1144,13 @@ python -m unittest discover -s tests -v</code></pre>
     </div>
   </section>
 
-  <!-- LICENCIA -->
-  <section class="section" id="licencia">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Licencia y pack</p>
-          <h2>El código se ve. La integración se licencia.</h2>
-        </div>
-        <p>El repositorio es público para consulta y estudio, pero su licencia no permite reutilizarlo sin permiso. La licencia de integración autoriza el uso en tu robot, con atribución y con las condiciones académicas que correspondan.</p>
-      </div>
-
-      <!-- EDIT: define aquí tus precios, tu correo y las condiciones finales. -->
-      <div class="pricing">
-        <article class="card price-card">
-          <p class="card-kicker">Individual</p>
-          <h3>Un robot</h3>
-          <div class="price">A consultar <small>/ licencia</small></div>
-          <p class="small muted">Para un equipo que quiere integrar el stack en su propio robot y aprender cómo está hecho.</p>
-          <ul class="checks">
-            <li>Acceso al código y a la documentación.</li>
-            <li>Guía de integración y calibración.</li>
-            <li>Permiso de uso en un robot.</li>
-            <li>Atribución a autores y profesorado.</li>
-          </ul>
-          <a class="btn btn-ghost btn-wide" href="#contacto">Solicitar propuesta</a>
-        </article>
-
-        <article class="card price-card featured">
-          <p class="card-kicker">Equipo</p>
-          <h3>Hasta 3 robots</h3>
-          <div class="price">A consultar <small>/ equipo</small></div>
-          <p class="small muted">Para un grupo que comparte arena, quiere varias copias y necesita una puesta en marcha acompañada.</p>
-          <ul class="checks">
-            <li>Todo lo de la licencia individual.</li>
-            <li>Hasta 3 robots del mismo equipo.</li>
-            <li>Sesión de onboarding técnica.</li>
-            <li>Revisión de configuración y mapa.</li>
-          </ul>
-          <a class="btn btn-primary btn-wide" href="#contacto">Solicitar propuesta</a>
-        </article>
-
-        <article class="card price-card">
-          <p class="card-kicker">Integración guiada</p>
-          <h3>Llave en mano</h3>
-          <div class="price">A consultar <small>/ sesión</small></div>
-          <p class="small muted">Para quien quiere verlo funcionar en su robot sin pelearse con la primera puesta en marcha.</p>
-          <ul class="checks">
-            <li>Sesión remota de despliegue.</li>
-            <li>Calibración de geometría y mapa.</li>
-            <li>Prueba de fases y checklist final.</li>
-            <li>Informe de qué se ha cambiado.</li>
-          </ul>
-          <a class="btn btn-ghost btn-wide" href="#contacto">Solicitar propuesta</a>
-        </article>
-      </div>
-
-      <div class="grid-2" style="margin-top:16px">
-        <div class="card">
-          <p class="card-kicker">Qué significa “licencia”</p>
-          <h3>Permiso, no transferencia de autoría</h3>
-          <ul class="checks">
-            <li>Puedes leer, estudiar y evaluar el código libremente.</li>
-            <li>Para reutilizarlo o modificarlo necesitas permiso escrito.</li>
-            <li>El uso académico requiere además permiso del profesorado.</li>
-            <li>Siempre hay que acreditar a los autores y a la asignatura.</li>
-            <li>No se permite revender ni redistribuir el pack.</li>
-          </ul>
-          <p class="small muted" style="margin-top:12px">La licencia completa está en <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/LICENSE.md" target="_blank" rel="noopener" style="color:var(--lime)">LICENSE.md</a>.</p>
-        </div>
-        <div class="card">
-          <p class="card-kicker">Aviso académico</p>
-          <h3>Esto no es una práctica para entregar</h3>
-          <p>El pack está pensado para integrar, adaptar y aprender. Comprar una licencia no convierte el proyecto en tu trabajo original ni autoriza a presentarlo como entrega propia.</p>
-          <p>Antes de usarlo en una asignatura, habla con el profesorado y respeta la normativa de la Universidad de Zaragoza. La autoría es de <strong>Sergio Toro Codo</strong> y <strong>Guillén Sainctavit</strong>, con la guía del profesorado de Robots Autónomos.</p>
-          <div class="callout danger" style="margin-bottom:0">
-            <span class="icon">!</span>
-            <div><strong>Si buscas copiar y entregar, este pack no es para ti.</strong> Si buscas entenderlo, adaptarlo y defenderlo, sí.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="callout good" style="margin-top:16px">
-        <span class="icon">→</span>
-        <div><strong>¿Por qué tiene sentido pagar por esto?</strong> Porque no compras un ZIP: compras una base probada, una guía de integración y el tiempo de alguien que ya se ha peleado con la geometría, el mapa, la luz y los marcadores. El código es público; el permiso y el acompañamiento son el producto.</div>
-      </div>
-    </div>
-  </section>
-
   <!-- FAQ -->
   <section class="section" id="faq">
     <div class="wrap">
       <div class="section-head">
         <div>
           <p class="eyebrow">Preguntas frecuentes</p>
-          <h2>Lo que conviene saber antes de comprar.</h2>
+          <h2>Lo que conviene saber antes de empezar.</h2>
         </div>
         <p>Si tu duda no está aquí, escríbeme por GitHub con el modelo de robot, los puertos y la arena. Con esos datos puedo decirte qué habría que cambiar.</p>
       </div>
@@ -1135,7 +1170,7 @@ python -m unittest discover -s tests -v</code></pre>
         </details>
         <details>
           <summary>¿Incluye las escenas de CoppeliaSim o el material del curso?</summary>
-          <div class="answer"><p>No. El proceso de simulación está documentado, pero las escenas, la API del curso, los PDFs y los enunciados no se venden ni se redistribuyen. El repo se centra en el código propio del robot.</p></div>
+          <div class="answer"><p>No. El proceso de simulación está documentado, pero las escenas, la API del curso, los PDFs y los enunciados no se incluyen ni se redistribuyen. El repo se centra en el código propio del robot.</p></div>
         </details>
         <details>
           <summary>¿Funciona sin cámara o sin giroscopio?</summary>
@@ -1146,8 +1181,8 @@ python -m unittest discover -s tests -v</code></pre>
           <div class="answer"><p>Intermedio: leer clases, editar un dict de configuración, ejecutar tests y mirar logs. La parte de visión y la de cinemática están documentadas, pero no es un proyecto para alguien que nunca ha programado.</p></div>
         </details>
         <details>
-          <summary>¿Puedo redistribuirlo o venderlo a otros?</summary>
-          <div class="answer"><p>No sin permiso escrito. La licencia permite consulta y estudio, pero la reutilización, modificación y redistribución requieren autorización. Tampoco se puede quitar la atribución a los autores ni al profesorado.</p></div>
+          <summary>¿Puedo usar el código en mi proyecto?</summary>
+          <div class="answer"><p>Sí, como base de integración y aprendizaje. Revisa las condiciones del repositorio en GitHub y acredita a los autores y al profesorado.</p></div>
         </details>
         <details>
           <summary>¿Garantiza aprobar o ganar la competición?</summary>
@@ -1175,9 +1210,9 @@ python -m unittest discover -s tests -v</code></pre>
           </div>
         </div>
         <aside class="contact-aside">
-          <p><strong>Asunto sugerido</strong><br><code>Licencia robot autónomo · [tu universidad]</code></p>
+          <p><strong>Asunto sugerido</strong><br><code>Integración robot autónomo · [tu universidad]</code></p>
           <p><strong>Incluye</strong><br>Modelo de robot, puertos, sensores, cámara y arena.</p>
-          <p><strong>Respuesta</strong><br>Te digo qué licencia tiene sentido y qué habría que calibrar.</p>
+          <p><strong>Respuesta</strong><br>Te digo qué partes encajan y qué habría que calibrar.</p>
           <p class="small muted" style="margin:0">También puedes abrir una consulta en GitHub. No compartas datos personales de terceros.</p>
           <!-- EDIT: si quieres, añade aquí tu correo o un formulario. -->
         </aside>
@@ -1195,7 +1230,7 @@ python -m unittest discover -s tests -v</code></pre>
           <strong>LEGO Autonomous Robot</strong>
         </div>
         <p style="max-width:44ch">Stack de autonomía para un robot diferencial LEGO + BrickPi3. Proyecto de la asignatura <strong>Robots Autónomos</strong>, EINA, Universidad de Zaragoza.</p>
-        <p class="small">© 2026 Sergio Toro Codo y Guillén Sainctavit. Código source-available: consulta libre, reutilización con permiso.</p>
+        <p class="small">© 2026 Sergio Toro Codo y Guillén Sainctavit. Proyecto académico · EINA, Universidad de Zaragoza.</p>
       </div>
       <div>
         <p class="footer-title">Proyecto</p>
@@ -1209,7 +1244,6 @@ python -m unittest discover -s tests -v</code></pre>
       <div>
         <p class="footer-title">Legal</p>
         <div class="footer-links">
-          <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/LICENSE.md" target="_blank" rel="noopener">Licencia</a>
           <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/assets/markers/NOTICE.md" target="_blank" rel="noopener">Marcadores y marcas</a>
           <a href="#contacto">Contacto</a>
         </div>
@@ -1262,6 +1296,7 @@ python -m unittest discover -s tests -v</code></pre>
   // Active section in nav
   var navLinks = Array.prototype.slice.call(document.querySelectorAll(".site-nav a"));
   var sections = navLinks
+    .filter(function (link) { return (link.getAttribute("href") || "").charAt(0) === "#"; })
     .map(function (link) { return document.querySelector(link.getAttribute("href")); })
     .filter(Boolean);
 
