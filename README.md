@@ -10,13 +10,13 @@ The robot drives a timed slalom, plans and follows a path through a maze, tracks
   <em>Real camera feed: ORB keypoints + RANSAC homography tracking the R2-D2 and BB-8 templates in real time. This is the project's own detector, not a simulation render.</em>
 </p>
 
-!\[Python](https://img.shields.io/badge/python-3.10%2B-blue)
-!\[Tests](https://img.shields.io/badge/tests-20%20unit%20tests-brightgreen)
-!\[License](https://img.shields.io/badge/license-academic%20use-blue)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Tests](https://img.shields.io/badge/tests-20%20unit%20tests-brightgreen)
+![License](https://img.shields.io/badge/license-academic%20use-blue)
 
-> Project developed for the \*\*Robots Autónomos\*\* course (4th year, GIEA) at the \*\*Escuela de Ingeniería y Arquitectura (EINA), Universidad de Zaragoza\*\*, under the guidance of the course professors. See \[Authors and acknowledgements](#authors-and-acknowledgements).
+> Project developed for the **Robots Autónomos** course (4th year, GIEA) at the **Escuela de Ingeniería y Arquitectura (EINA), Universidad de Zaragoza**, under the guidance of the course professors. See [Authors and acknowledgements](#authors-and-acknowledgements).
 
-\---
+---
 
 ## What the robot does
 
@@ -59,36 +59,36 @@ The heavy original recordings are not committed; the GIFs above are optimized co
 ```bash
 python -m pip install -r requirements.txt
 
-python demo.py --map maps/arena\_a.txt --start 1 2 --goal 3 3
+python demo.py --map maps/arena_a.txt --start 1 2 --goal 3 3
 ```
 
 Output:
 
 ```text
-Map: arena\_a.txt
+Map: arena_a.txt
   size: 7 x 7 cells
   cell size: 40.0 cm
   start: (1, 2)  goal: (3, 3)
-  path: \[(1, 2), (2, 2), (3, 2), (3, 3)]
+  path: [(1, 2), (2, 2), (3, 2), (3, 3)]
   cells: 4
   geometric length: 120.0 cm
   NF1 cost at start: 3
-Saved figure: .../docs/images/planned\_path\_arena\_a.png
+Saved figure: .../docs/images/planned_path_arena_a.png
 ```
 
 Try the other arena:
 
 ```bash
-python demo.py --map maps/arena\_b.txt --start 5 2 --goal 3 3 \\
-  --output docs/images/planned\_path\_arena\_b.png
+python demo.py --map maps/arena_b.txt --start 5 2 --goal 3 3 \
+  --output docs/images/planned_path_arena_b.png
 ```
 
 Run the marker detector on the recorded test frame:
 
 ```bash
-python tools/detect\_markers.py \\
-  --image assets/samples/markers\_test.jpg \\
-  --output docs/images/marker\_detection.jpg
+python tools/detect_markers.py \
+  --image assets/samples/markers_test.jpg \
+  --output docs/images/marker_detection.jpg
 ```
 
 ```text
@@ -124,16 +124,16 @@ python main.py --artifacts artifacts/run  # save the mission map here
 
 ```mermaid
 flowchart LR
-    CAM\[Pi camera] --> VIS\[Vision<br/>ball + markers]
-    US\[Ultrasonic] --> ROB\[Robot API]
-    GYRO\[EV3 gyro] --> ODO\[Odometry thread]
-    ENC\[Wheel encoders] --> ODO
+    CAM[Pi camera] --> VIS[Vision<br/>ball + markers]
+    US[Ultrasonic] --> ROB[Robot API]
+    GYRO[EV3 gyro] --> ODO[Odometry thread]
+    ENC[Wheel encoders] --> ODO
     ODO --> ROB
-    VIS --> MISSION\[Mission<br/>sequencer]
+    VIS --> MISSION[Mission<br/>sequencer]
     ROB --> MISSION
-    MISSION --> PLAN\[NF1 planner]
+    MISSION --> PLAN[NF1 planner]
     PLAN --> ROB
-    MISSION --> GRIP\[Gripper]
+    MISSION --> GRIP[Gripper]
 ```
 
 |Layer|Module|Responsibility|
@@ -174,9 +174,9 @@ More detail: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/ALGORITHM
 
 |NF1 plan — arena A|NF1 plan — arena B|
 |:-:|:-:|
-|<img src="docs/images/planned\_path\_arena\_a.png" width="100%" alt="NF1 plan for arena A">|<img src="docs/images/planned\_path\_arena\_b.png" width="100%" alt="NF1 plan for arena B">|
+|<img src="docs/images/planned_path_arena_a.png" width="100%" alt="NF1 plan for arena A">|<img src="docs/images/planned_path_arena_b.png" width="100%" alt="NF1 plan for arena B">|
 
-The unit tests and figures in this repository were run on the hardware-independent modules. The mission was developed for the physical robot and a CoppeliaSim model during the course; this repository is a cleaned refactor. Reproducing it end-to-end requires the BrickPi3 hardware and the arena. See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the exact scope, including a comparison with the explanatory poster (`Cartel\_Robot.pdf`, not included).
+The unit tests and figures in this repository were run on the hardware-independent modules. The mission was developed for the physical robot and a CoppeliaSim model during the course; this repository is a cleaned refactor. Reproducing it end-to-end requires the BrickPi3 hardware and the arena. See [`docs/VALIDATION.md`](docs/VALIDATION.md) for the exact scope, including a comparison with the explanatory poster (`Cartel_Robot.pdf`, not included).
 
 ## Simulation
 
@@ -200,8 +200,8 @@ The process, the sim-to-real gaps, and how to plug in a simulator through the `H
 │   ├── mission.py              # four-phase mission sequencer
 │   └── hardware.py             # BrickPi3 adapter
 ├── maps/
-│   ├── arena\_a.txt             # white-floor arena
-│   ├── arena\_b.txt             # black-floor arena
+│   ├── arena_a.txt             # white-floor arena
+│   ├── arena_b.txt             # black-floor arena
 │   └── README.md               # map format
 ├── assets/
 │   ├── markers/                # R2-D2 / BB-8 reference images + notice
@@ -214,7 +214,7 @@ The process, the sim-to-real gaps, and how to plug in a simulator through the `H
 │   ├── SIMULATION.md
 │   └── VALIDATION.md           # tests, poster comparison, limitations
 ├── tests/                      # 20 unit tests
-├── tools/detect\_markers.py     # annotate an image with detections
+├── tools/detect_markers.py     # annotate an image with detections
 ├── LICENSE.md                  # academic-use terms; code reuse requires permission
 └── .github/workflows/tests.yml # CI: tests + offline demos
 ```
@@ -238,13 +238,13 @@ The process, the sim-to-real gaps, and how to plug in a simulator through the `H
 
 This project was developed for the **Robots Autónomos** course at the **Escuela de Ingeniería y Arquitectura (EINA), Universidad de Zaragoza**. We sincerely thank the course professors for their teaching, continuous correction, and guidance throughout the project. Their supervision made the design, debugging, and final integration possible.
 
-> \*\*Agradecimientos (ES):\*\* Proyecto tutorizado por el profesorado de la asignatura \*\*Robots Autónomos\*\* de la \*\*EINA, Universidad de Zaragoza\*\*. Su corrección y guía hicieron posible este proyecto. Cualquier uso autorizado del código debe reconocer expresamente esta labor.
+> **Agradecimientos (ES):** Proyecto tutorizado por el profesorado de la asignatura **Robots Autónomos** de la **EINA, Universidad de Zaragoza**. Su corrección y guía hicieron posible este proyecto. Cualquier uso autorizado del código debe reconocer expresamente esta labor.
 
 ## License and reuse
 
 This repository is **source-available for study and evaluation**, not an MIT/open-source project. Reading, studying, and referencing the code is free; **reusing, modifying, or redistributing the code requires prior written permission from the authors and, for academic reuse, from the Robots Autónomos teaching team**. Any authorised use must credit the authors and the course teaching team at EINA, Universidad de Zaragoza.
 
-> \*\*Uso (ES):\*\* consulta y estudio libres; la reutilización, modificación o redistribución del código requiere permiso previo por escrito de los autores y, cuando el uso sea académico, del profesorado de \*\*Robots Autónomos\*\* de la \*\*EINA, Universidad de Zaragoza\*\*. Cualquier uso autorizado debe acreditar expresamente esta labor.
+> **Uso (ES):** consulta y estudio libres; la reutilización, modificación o redistribución del código requiere permiso previo por escrito de los autores y, cuando el uso sea académico, del profesorado de **Robots Autónomos** de la **EINA, Universidad de Zaragoza**. Cualquier uso autorizado debe acreditar expresamente esta labor.
 
 See [`LICENSE.md`](LICENSE.md) for the full terms. R2-D2 and BB-8 are used only as non-commercial fiducial markers; see [`assets/markers/NOTICE.md`](assets/markers/NOTICE.md).
 
