@@ -232,7 +232,7 @@ The process, the sim-to-real gaps, and how to plug in a simulator through the `H
 **Authors**
 
 * **Sergio Toro Codo** — author ([@sejotta](https://github.com/sejotta)).
-* **Guillén Sainctavit** — author.
+* **Guillén Sainctavit** — author. (@870071-GuillenMSainctavitGarcia )
 
 **Acknowledgements**
 
