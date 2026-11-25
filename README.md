@@ -33,22 +33,31 @@ The full Python source code, tests, configuration and robot-specific calibration
 
 ## Request access to the code
 
-The code is shared case by case. Write to **sertor2004@gmail.com** with:
+The code is shared case by case. Contact me on WhatsApp:
+
+```text
+https://wa.me/qr/PXTMUZ4FCBSRP1
+```
+
+You can also scan the QR card on the website. Please include:
 
 - your GitHub username;
 - the robot/hardware you are using;
 - what you want to do with the code;
 - your deadline, if you have one.
 
-Suggested subject:
+Suggested message:
 
 ```text
-Solicitud de acceso al código del robot · [tu universidad]
+Hola, necesito acceso al código del robot.
+Usuario de GitHub: ...
+Robot/hardware: ...
+Uso previsto: ...
 ```
 
 I will reply with the conditions and, if it makes sense, grant access to the private repository.
 
-> The email is already present in the public commit metadata. If you prefer not to publish it, replace it in `index.html` with a contact form or a GitHub issue link.
+> The QR image in `assets/whatsapp-card.png` is the card you shared. If the WhatsApp contact link changes, update both the `wa.me` link and this image.
 
 ---
 

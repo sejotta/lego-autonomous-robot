@@ -518,6 +518,30 @@ td code,th code{color:var(--accent-strong);background:var(--accent-soft)}
 .footer-links a:hover{color:var(--accent-strong)}
 .footer-title{color:var(--muted-2)}
 .legal{color:var(--muted-2)}
+
+/* WhatsApp contact */
+.wa-float{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:250;width:58px;height:58px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 12px 30px rgba(18,140,70,.30);transition:transform .18s ease,box-shadow .18s ease;text-decoration:none}
+.wa-float:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 16px 36px rgba(18,140,70,.40);color:#fff}
+.wa-float:focus-visible{outline:3px solid #0b3b22;outline-offset:3px}
+.wa-float svg{width:31px;height:31px;fill:currentColor;display:block}
+.wa-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;padding:16px;background:rgba(8,25,16,.56);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+.wa-modal.is-open{opacity:1;visibility:visible}
+.wa-dialog{box-sizing:border-box;position:relative;width:min(460px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px 24px 22px;box-shadow:0 30px 90px rgba(8,30,18,.28);transform:translateY(26px);transition:transform .24s ease;text-align:center}
+.wa-modal.is-open .wa-dialog{transform:translateY(0)}
+.wa-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:#f5f8f2;color:var(--text);font-size:22px;line-height:1;display:grid;place-items:center;cursor:pointer}
+.wa-close:hover{background:#e9f2e2;border-color:var(--line-strong)}
+.wa-dialog .eyebrow{justify-content:center;margin-bottom:8px}
+.wa-dialog h3{font-size:1.45rem;line-height:1.15;margin:0 0 10px;letter-spacing:-.02em;color:var(--text)}
+.wa-lead{color:var(--muted);font-size:.96rem;margin:0 auto 16px;max-width:34ch}
+.wa-lead strong{color:var(--accent-strong)}
+.wa-card{display:block;width:min(245px,72vw);height:auto;margin:0 auto 12px;border-radius:18px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(20,50,30,.12)}
+.wa-note{color:var(--muted-2);font-size:.78rem;line-height:1.45;margin:0 auto 16px;max-width:36ch}
+.wa-cta{width:100%;justify-content:center}
+.wa-dialog .btn{width:100%}
+body.wa-open{overflow:hidden}
+@media (min-width:640px){.wa-modal{align-items:center}}
+@media (max-width:520px){.wa-float{width:54px;height:54px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px))}.wa-float svg{width:29px;height:29px}.wa-dialog{padding:24px 18px 18px;border-radius:22px}.wa-card{width:min(220px,70vw)}}
+@media (prefers-reduced-motion:reduce){.wa-float,.wa-modal,.wa-dialog{transition:none}}
 </style>
 </head>
 <body>
@@ -535,9 +559,9 @@ td code,th code{color:var(--accent-strong);background:var(--accent-soft)}
       <a href="#por-que">Por qué funciona</a>
       <a href="#integracion">Integración</a>
       <a href="#deploy">Deploy</a>
-      <a href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">GitHub</a>
+      <a href="#contacto">Contacto</a>
     </nav>
-    <a class="btn btn-primary btn-sm header-cta" href="#contacto">Solicitar acceso</a>
+    <a class="btn btn-primary btn-sm header-cta" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener">WhatsApp</a>
   </div>
 </header>
 
@@ -552,7 +576,7 @@ td code,th code{color:var(--accent-strong);background:var(--accent-soft)}
         <p class="lede">El robot que resuelve slalom, laberinto, pelota y salida con visión. Esta web pública explica cómo funciona, por qué funciona y cómo adaptarlo a tu robot. El código completo está en un repositorio privado.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#integracion">Cómo aplicarlo a tu robot</a>
-          <a class="btn btn-ghost" href="#contacto">Solicitar acceso al código</a>
+          <a class="btn btn-ghost js-wa-open" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener">Ver repositorio</a>
         </div>
         <ul class="hero-points" aria-label="Resumen técnico">
           <li>Python 3.10+</li>
@@ -1222,15 +1246,15 @@ python -m unittest discover -s tests -v</code></pre>
           <h2>Solicita acceso al código.</h2>
           <p>Esta web es pública; el código completo está en un repositorio privado. Si quieres usarlo en tu robot, cuéntame qué hardware tienes, qué puertos usas, qué arena vas a montar y para cuándo lo necesitas. Te digo si encaja y, si tiene sentido, te doy acceso.</p>
           <div class="contact-actions">
-            <a class="btn btn-primary" href="mailto:sertor2004@gmail.com?subject=Solicitud%20de%20acceso%20al%20c%C3%B3digo%20del%20robot">Solicitar acceso por correo</a>
-            <a class="btn btn-ghost" href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">Ver repositorio público</a>
+            <a class="btn btn-primary" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener">Contactar por WhatsApp</a>
+            <a class="btn btn-ghost js-wa-open" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener">Ver repositorio</a>
           </div>
         </div>
         <aside class="contact-aside">
-          <p><strong>Asunto sugerido</strong><br><code>Solicitud de acceso al código · [tu universidad]</code></p>
+          <p><strong>Mensaje sugerido</strong><br><code>Ayuda con el código · [tu universidad]</code></p>
           <p><strong>Incluye</strong><br>Usuario de GitHub, robot, puertos, uso previsto y plazo.</p>
           <p><strong>Respuesta</strong><br>Te digo si encaja y, si procede, te doy acceso al repositorio privado.</p>
-          <p class="small muted" style="margin:0">La solicitud se gestiona por correo. No compartas datos personales de terceros. <!-- EDIT: cambia el correo si no quieres usar este. --></p>
+          <p class="small muted" style="margin:0">La solicitud se gestiona por WhatsApp. No compartas datos personales de terceros.</p>
         </aside>
       </div>
     </div>
@@ -1251,7 +1275,7 @@ python -m unittest discover -s tests -v</code></pre>
       <div>
         <p class="footer-title">Proyecto</p>
         <div class="footer-links">
-          <a href="https://github.com/sejotta/lego-autonomous-robot" target="_blank" rel="noopener">Repositorio público</a>
+          <a class="js-wa-open" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener">WhatsApp</a>
           <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/README.md" target="_blank" rel="noopener">README</a>
           <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/docs/VALIDATION.md" target="_blank" rel="noopener">Validación</a>
           <a href="https://github.com/sejotta/lego-autonomous-robot/blob/main/docs/SIMULATION.md" target="_blank" rel="noopener">Simulación</a>
@@ -1331,5 +1355,52 @@ python -m unittest discover -s tests -v</code></pre>
   }
 })();
 </script>
+
+<!-- WHATSAPP CONTACT -->
+<div class="wa-modal" id="wa-modal" role="dialog" aria-modal="true" aria-labelledby="wa-title" aria-hidden="true">
+  <div class="wa-dialog">
+    <button class="wa-close" type="button" aria-label="Cerrar">&times;</button>
+    <p class="eyebrow">Contacto por WhatsApp</p>
+    <h3 id="wa-title">¿Necesitas ayuda con el código?</h3>
+    <p class="wa-lead">Si necesitas <strong>AYUDA</strong> del código no dudes en contactarme.</p>
+    <img class="wa-card" src="assets/whatsapp-card.png" alt="Código QR de WhatsApp de Sergio" width="648" height="687">
+    <p class="wa-note">Escanea el QR con la cámara de WhatsApp o pulsa el botón para abrir el chat.</p>
+    <a class="btn btn-primary wa-cta" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener">Abrir WhatsApp</a>
+  </div>
+</div>
+<a class="wa-float" href="https://wa.me/qr/PXTMUZ4FCBSRP1" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp" title="WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.91-7.02ZM12.05 20.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.23-8.23 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg>
+</a>
+<script>
+(function () {
+  "use strict";
+  var modal = document.getElementById("wa-modal");
+  if (!modal) return;
+  var openers = document.querySelectorAll(".js-wa-open");
+  var closeBtn = modal.querySelector(".wa-close");
+  var lastFocus = null;
+  function openModal(event) {
+    if (event) event.preventDefault();
+    lastFocus = document.activeElement;
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("wa-open");
+    if (closeBtn) closeBtn.focus();
+  }
+  function closeModal() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("wa-open");
+    if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+  }
+  Array.prototype.forEach.call(openers, function (el) { el.addEventListener("click", openModal); });
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", function (event) { if (event.target === modal) closeModal(); });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  });
+})();
+</script>
+
 </body>
 </html>
